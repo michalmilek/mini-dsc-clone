@@ -21,16 +21,12 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import FileUpload from "../file-upload";
-import useSWRMutation from "swr/mutation";
-import {
-  createNewServer,
-  useCreateServer,
-} from "@/app/services/server/createServer";
-import { useSWRConfig } from "swr";
 import { useModal } from "@/app/hooks/use-modal-store";
+import { useRouter } from "next/navigation";
+import useSWRMutation from "swr/mutation";
+import { createNewServerFn } from "@/app/services/server/createServer";
 
 interface FormData {
   name: string;
@@ -42,10 +38,13 @@ const schema = z.object({
   imageUrl: z.string().url(),
 });
 
-export const InitiaLmodal = () => {
-  const { onClose } = useModal();
-  const { createNewServer, swr } = useCreateServer();
-  const [isLoaded, setIsLoaded] = useState(false);
+export const CreateServerModal = () => {
+  const { trigger, isMutating } = useSWRMutation(
+    "/api/servers",
+    createNewServerFn
+  );
+  const { type, isOpen, onOpen, onClose } = useModal();
+  const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -55,22 +54,24 @@ export const InitiaLmodal = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    createNewServer(data);
-    console.log(data);
+    trigger(data, {
+      onSuccess: (result) => {
+        console.log(result);
+        onClose();
+        router.refresh();
+      },
+    });
   };
 
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
-  if (!isLoaded) {
-    return null;
-  }
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
 
   return (
     <Dialog
-      onOpenChange={onClose}
-      open>
+      open={isOpen}
+      onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Customize your server</DialogTitle>
@@ -116,7 +117,13 @@ export const InitiaLmodal = () => {
               )}
             />
             <DialogFooter>
-              <Button>Create</Button>
+              <Button
+                type="button"
+                onClick={handleClose}
+                variant={"destructive"}>
+                Close
+              </Button>
+              <Button disabled={isMutating}>Create</Button>
             </DialogFooter>
           </form>
         </Form>

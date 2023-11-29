@@ -21,16 +21,14 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import FileUpload from "../file-upload";
-import useSWRMutation from "swr/mutation";
-import {
-  createNewServer,
-  useCreateServer,
-} from "@/app/services/server/createServer";
-import { useSWRConfig } from "swr";
 import { useModal } from "@/app/hooks/use-modal-store";
+import { useRouter } from "next/navigation";
+import useSWRMutation from "swr/mutation";
+import { createNewServerFn } from "@/app/services/server/createServer";
+import { editServer } from "@/app/services/server/editServer";
+import { useToast } from "../ui/use-toast";
 
 interface FormData {
   name: string;
@@ -42,35 +40,46 @@ const schema = z.object({
   imageUrl: z.string().url(),
 });
 
-export const InitiaLmodal = () => {
-  const { onClose } = useModal();
-  const { createNewServer, swr } = useCreateServer();
-  const [isLoaded, setIsLoaded] = useState(false);
+export const EditServerModal = () => {
+  const { toast } = useToast();
+  const { type, isOpen, onOpen, onClose, data } = useModal();
+  const { server } = data;
+  const { trigger, isMutating } = useSWRMutation(
+    `/api/servers/${server?.id}`,
+    editServer
+  );
+  const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
-      imageUrl: "",
+      name: server?.name,
+      imageUrl: server?.imageUrl,
     },
   });
 
   const onSubmit = (data: FormData) => {
-    createNewServer(data);
-    console.log(data);
+    trigger(data, {
+      onSuccess: (result) => {
+        onClose();
+        form.reset();
+        router.refresh();
+        toast({
+          title: "User edited succesfully",
+          variant: "success",
+        });
+      },
+    });
   };
 
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
-
-  if (!isLoaded) {
-    return null;
-  }
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
 
   return (
     <Dialog
-      onOpenChange={onClose}
-      open>
+      open={isOpen}
+      onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Customize your server</DialogTitle>
@@ -116,7 +125,13 @@ export const InitiaLmodal = () => {
               )}
             />
             <DialogFooter>
-              <Button>Create</Button>
+              <Button
+                type="button"
+                onClick={handleClose}
+                variant={"destructive"}>
+                Close
+              </Button>
+              <Button disabled={isMutating}>Create</Button>
             </DialogFooter>
           </form>
         </Form>

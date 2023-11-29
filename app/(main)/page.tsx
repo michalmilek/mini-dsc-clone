@@ -8,6 +8,9 @@ import { InitiaLmodal } from "@/components/modals/initial-modal";
 
 const page = async () => {
   const profile = await initialProfile();
+  if (!profile) {
+    return redirect("/sign-up");
+  }
 
   const server = await db.server.findFirst({
     where: {
