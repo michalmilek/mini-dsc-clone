@@ -1,8 +1,25 @@
+import ServerChannelsList from "@/components/server/server-channels-list";
 import ServerDropdown from "@/components/server/server-dropdown";
+import ServerSearch from "@/components/server/server-search";
+import { Separator } from "@/components/ui/separator";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
+import { ChannelType, MemberRole } from "@prisma/client";
+import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
+
+const iconMap = {
+  [ChannelType.TEXT]: <Hash />,
+  [ChannelType.AUDIO]: <Mic />,
+  [ChannelType.VIDEO]: <Video />,
+};
+
+const iconRoleMap = {
+  [MemberRole.GUEST]: null,
+  [MemberRole.ADMIN]: <ShieldAlert />,
+  [MemberRole.MODERATOR]: <ShieldCheck />,
+};
 
 const ServerIdLayout = async ({
   children,
@@ -57,16 +74,63 @@ const ServerIdLayout = async ({
   const role = server.members.find(
     (member) => member.profileId === profile.id
   )?.role;
-  console.log("🚀 ~ role:", role);
 
   return (
     <div className="h-full pl-32 w-full">
-      <nav className="hidden fixed md:flex h-full w-60 z-20 flex-col inset-y-0 bg-gray-200 dark:bg-gray-700 shadow-xl p-3">
+      <nav className="hidden fixed md:flex h-full w-60 z-20 flex-col inset-y-0 bg-gray-200 dark:bg-gray-700 shadow-xl p-3 gap-4">
         <ServerDropdown
           server={server}
           members={members}
           name={server.name}
           role={role}
+        />
+        <ServerSearch
+          data={[
+            {
+              label: "Text channels",
+              type: "channel",
+              data: textChannels.map((channel) => ({
+                id: channel.id,
+                name: channel.name,
+                icon: iconMap[channel.type],
+              })),
+            },
+            {
+              label: "Voice channels",
+              type: "channel",
+              data: audioChnanels.map((channel) => ({
+                id: channel.id,
+                name: channel.name,
+                icon: iconMap[channel.type],
+              })),
+            },
+            {
+              label: "Video channels",
+              type: "channel",
+              data: videoChannels.map((channel) => ({
+                id: channel.id,
+                name: channel.name,
+                icon: iconMap[channel.type],
+              })),
+            },
+            {
+              label: "Members",
+              type: "member",
+              data: members.map((member) => ({
+                id: member.id,
+                name: member.profile.name,
+                icon: iconRoleMap[member.role],
+              })),
+            },
+          ]}
+        />
+        <Separator />
+        <ServerChannelsList
+          label="Text channels"
+          channelType="TEXT"
+          role={role}
+          sectionType="channels"
+          server={server}
         />
       </nav>
       <main className="h-full md:pl-60">{children}</main>
