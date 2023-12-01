@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { ChannelType, MemberRole } from "@prisma/client";
-import { Hash, Mic, ShieldAlert, ShieldCheck, Video } from "lucide-react";
+import { Hash, Mic, ShieldAlert, ShieldCheck, User, Video } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
 
@@ -16,7 +16,7 @@ const iconMap = {
 };
 
 const iconRoleMap = {
-  [MemberRole.GUEST]: null,
+  [MemberRole.GUEST]: <User />,
   [MemberRole.ADMIN]: <ShieldAlert />,
   [MemberRole.MODERATOR]: <ShieldCheck />,
 };

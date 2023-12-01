@@ -169,7 +169,9 @@ const ServerChannelsList = ({
                     <Button
                       className="gap-2"
                       onClick={() => {
-                        router.push(`/servers/${server?.id}/${member.id}`);
+                        router.push(
+                          `/servers/${server?.id}/conversations/${member.id}`
+                        );
                       }}
                       variant={"link"}>
                       <Avatar>

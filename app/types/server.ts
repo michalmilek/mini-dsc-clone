@@ -1,4 +1,4 @@
-import { Channel, Member } from "@prisma/client";
+import { Channel, MemberRole } from "@prisma/client";
 
 export interface NewServerRequest {
   name: string;
@@ -40,4 +40,22 @@ export type ChannelType = "TEXT" | "AUDIO" | "VIDEO";
 export interface ChannelRequest {
   name: string;
   type: ChannelType;
+}
+
+export interface MemberChat {
+  profile: {
+    id: string;
+    userId: string;
+    name: string;
+    imageUrl: string;
+    email: string;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  id: string;
+  role: MemberRole;
+  profileId: string;
+  serverId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

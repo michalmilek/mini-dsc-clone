@@ -1,10 +1,8 @@
-import React from "react";
-import { UserButton } from "@clerk/nextjs";
-import { ModeToggle } from "@/components/mode-toggle";
-import { initialProfile } from "@/lib/initial-profile";
-import { db } from "@/lib/db";
-import { redirect } from "next/navigation";
 import { InitiaLmodal } from "@/components/modals/initial-modal";
+import { db } from "@/lib/db";
+import { initialProfile } from "@/lib/initial-profile";
+import { redirect } from "next/navigation";
+import React from "react";
 
 const page = async () => {
   const profile = await initialProfile();

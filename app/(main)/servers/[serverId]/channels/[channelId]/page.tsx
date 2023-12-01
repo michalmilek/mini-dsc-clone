@@ -21,7 +21,10 @@ const ChannelIdPage = async ({
 
   return (
     <div>
-      <ServerHeader channel={channel} />
+      <ServerHeader
+        type="channel"
+        channel={channel}
+      />
     </div>
   );
 };

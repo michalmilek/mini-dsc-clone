@@ -1,6 +1,6 @@
-import React from "react";
-import { SignedIn } from "@clerk/nextjs";
 import NavigationSidebar from "@/components/navigation/navigation-sidebar";
+import { SignedIn } from "@clerk/nextjs";
+import React from "react";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
