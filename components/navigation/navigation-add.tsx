@@ -1,14 +1,11 @@
 "use client";
 
 import { Plus } from "lucide-react";
-import { Button } from "../ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+import { useEffect, useState } from "react";
+
 import { useModal } from "@/app/hooks/use-modal-store";
+
+import { Button } from "../ui/button";
 
 interface Props {
   label?: string;
@@ -25,7 +22,15 @@ interface Props {
       </TooltipProvider>; */
 
 const NavigationAdd = ({ label }: Props) => {
+  const [mounted, setMounted] = useState(false);
   const { onOpen } = useModal();
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div className="w-full flex items-center justify-center">

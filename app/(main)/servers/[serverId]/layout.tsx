@@ -1,13 +1,14 @@
+import { ChannelType, MemberRole } from "@prisma/client";
+import { Hash, Mic, ShieldAlert, ShieldCheck, User, Video } from "lucide-react";
+import { redirect } from "next/navigation";
+import React from "react";
+
 import ServerChannelsList from "@/components/server/server-channels-list";
 import ServerDropdown from "@/components/server/server-dropdown";
 import ServerSearch from "@/components/server/server-search";
 import { Separator } from "@/components/ui/separator";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
-import { ChannelType, MemberRole } from "@prisma/client";
-import { Hash, Mic, ShieldAlert, ShieldCheck, User, Video } from "lucide-react";
-import { redirect } from "next/navigation";
-import React from "react";
 
 const iconMap = {
   [ChannelType.TEXT]: <Hash />,

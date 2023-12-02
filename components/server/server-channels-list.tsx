@@ -1,19 +1,20 @@
 "use client";
 
-import { ServerWithMembersAndChannels } from "@/app/types/server";
 import { ChannelType, MemberRole } from "@prisma/client";
-import React from "react";
+import { Edit, Hash, Mic, Plus, Trash, Video } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { useModal } from "@/app/hooks/use-modal-store";
+import { ServerWithMembersAndChannels } from "@/app/types/server";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Edit, Hash, Mic, Plus, Trash, Video } from "lucide-react";
-import { useModal } from "@/app/hooks/use-modal-store";
-import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 interface ServerSectionProps {
   label: string;
@@ -30,6 +31,7 @@ const ServerChannelsList = ({
   channelType,
   server,
 }: ServerSectionProps) => {
+  const [mounted, setMounted] = useState(false);
   const { onOpen } = useModal();
   const router = useRouter();
 
@@ -45,6 +47,14 @@ const ServerChannelsList = ({
   );
 
   const members = server?.members;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <div>

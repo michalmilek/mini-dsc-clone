@@ -1,12 +1,4 @@
 "use client";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { $Enums, Server } from "@prisma/client";
 import {
   ArrowDown,
@@ -17,7 +9,17 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
+import { useModal } from "@/app/hooks/use-modal-store";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 interface Props {
   server: Server;
   role?: $Enums.MemberRole;
@@ -42,16 +44,23 @@ interface Props {
   name: string;
 }
 
-import React from "react";
-import { Button } from "../ui/button";
-import { useModal } from "@/app/hooks/use-modal-store";
-
 const ServerDropdown = ({ role, members, name, server }: Props) => {
+  const [mounted, setMounted] = useState(false);
   const { onOpen } = useModal();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="font-bold flex items-center w-full justify-center">
-        <Button variant={"default"}>Server Settings</Button>
+      <DropdownMenuTrigger className="font-bold flex items-center w-full justify-center gap-3">
+        Server Settings
+        <ArrowDown className="h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>{name}</DropdownMenuLabel>

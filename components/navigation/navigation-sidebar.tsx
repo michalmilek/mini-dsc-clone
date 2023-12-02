@@ -1,18 +1,15 @@
-import { currentProfile } from "@/lib/current-profile";
-import { db } from "@/lib/db";
-import Link from "next/link";
+import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import NavigationAdd from "./navigation-add";
-import Image from "next/image";
+
+import { currentProfile } from "@/lib/current-profile";
+import { db } from "@/lib/db";
+
 import { ModeToggle } from "../mode-toggle";
-import { Separator } from "../ui/separator";
-import { cn } from "@/lib/utils";
-import clsx from "clsx";
-import NavigationItem from "./navigation-item";
-import { UserButton, UserProfile } from "@clerk/nextjs";
 import { ScrollArea } from "../ui/scroll-area";
+import { Separator } from "../ui/separator";
+import NavigationAdd from "./navigation-add";
+import NavigationItem from "./navigation-item";
 
 const NavigationSidebar = async () => {
   const profile = await currentProfile();
@@ -33,9 +30,6 @@ const NavigationSidebar = async () => {
     <aside className="fixed inset-y-0 left-0 flex flex-col justify-between  items-center p-3 bg-white dark:bg-black shadow w-32 z-30">
       <div className="flex flex-col">
         <div className="space-y-3">
-          <div className="flex items-center w-full justify-center">
-            <h2 className="text-xl font-bold">Dashboard</h2>
-          </div>
           <NavigationAdd label="Create server" />
 
           <div className="flex-1">

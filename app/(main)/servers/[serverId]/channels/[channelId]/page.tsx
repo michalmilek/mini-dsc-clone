@@ -1,6 +1,6 @@
+import ChatInput from "@/components/chat/chat-input";
 import ServerHeader from "@/components/server/server-header";
 import { db } from "@/lib/db";
-import React from "react";
 
 const ChannelIdPage = async ({
   params,
@@ -24,6 +24,15 @@ const ChannelIdPage = async ({
       <ServerHeader
         type="channel"
         channel={channel}
+      />
+      <ChatInput
+        name={channel.name}
+        type="channel"
+        apiUrl="/api/socket/messages"
+        query={{
+          channelId: channel.id,
+          serverId: channel.serverId,
+        }}
       />
     </div>
   );
