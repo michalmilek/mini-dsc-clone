@@ -1,7 +1,15 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import { Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
+
+import { useModal } from "@/app/hooks/use-modal-store";
+import { useChangeRole } from "@/app/services/server/changeRole";
+import { useDeleteUser } from "@/app/services/server/deleteUser";
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
@@ -9,14 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Button } from "../ui/button";
-import { Trash } from "lucide-react";
-import useSWRMutation from "swr/mutation";
-import { changeRole } from "@/app/services/server/changeRole";
 import { useToast } from "../ui/use-toast";
-import { useRouter } from "next/navigation";
-import { deleteUser } from "@/app/services/server/deleteUser";
-import { useModal } from "@/app/hooks/use-modal-store";
 
 interface UserInfoProps {
   name: string;
@@ -42,8 +43,10 @@ const Member: FC<UserInfoProps> = ({
     `/api/servers/${serverId}/change-role`,
     changeRole
   );
-  const { trigger: deleteUserFn, isMutating: isMutatingDeleteUser } =
-    useSWRMutation(`/api/servers/${serverId}/delete-user`, deleteUser);
+  const { mutate: deleteUserFn, isPending: isMutatingDeleteUser } =
+    useDeleteUser();
+
+  const { mutate } = useChangeRole();
 
   const [value, setValue] = useState(role.toLowerCase());
 
@@ -62,13 +65,16 @@ const Member: FC<UserInfoProps> = ({
       <Select
         onValueChange={(changedValue) => {
           setValue(changedValue);
-          trigger(
+          mutate(
             {
-              body: {
-                role: changedValue.toUpperCase() as "GUEST" | "MODERATOR",
-              },
-              params: {
-                memberId,
+              url: `/api/servers/${serverId}/change-role`,
+              arg: {
+                body: {
+                  role: changedValue.toUpperCase() as "GUEST" | "MODERATOR",
+                },
+                params: {
+                  memberId,
+                },
               },
             },
             {
@@ -102,8 +108,11 @@ const Member: FC<UserInfoProps> = ({
         onClick={() => {
           deleteUserFn(
             {
-              params: {
-                memberId,
+              url: `/api/servers/${serverId}/delete-user`,
+              arg: {
+                params: {
+                  memberId,
+                },
               },
             },
             {

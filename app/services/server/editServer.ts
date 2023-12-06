@@ -1,9 +1,18 @@
-import { NewServerRequest } from "@/app/types/server";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-export async function editServer(
-  url: string,
-  { arg }: { arg: NewServerRequest }
-) {
-  return axios.patch(url, arg).then((res) => res.data);
+import { NewServerRequest } from "@/app/types/server";
+
+export function useEditServer() {
+  const editServer = async ({
+    url,
+    arg,
+  }: {
+    url: string;
+    arg: NewServerRequest;
+  }) => {
+    return axios.patch(url, arg).then((res) => res.data);
+  };
+
+  return useMutation({ mutationFn: editServer });
 }

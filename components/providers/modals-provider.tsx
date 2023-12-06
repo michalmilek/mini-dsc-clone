@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 
 import { useModal } from "@/app/hooks/use-modal-store";
+import { DeleteMessageModal } from "@/components/modals/delete-message-modal";
+import { MessageFileModal } from "@/components/modals/message-file-modal";
 
 import { CreateChannelModal } from "../modals/create-channel-modal";
 import { CreateServerModal } from "../modals/create-server-modal";
@@ -16,6 +18,7 @@ import { MembersModal } from "../modals/members-modal";
 const ModalsProvider = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const { type } = useModal();
+  console.log("🚀 ~ type:", type);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -35,6 +38,8 @@ const ModalsProvider = () => {
       {type === "deleteServer" && <DeleteServerModal />}
       {type === "deleteChannel" && <DeleteChannelModal />}
       {type === "editChannel" && <EditChannelModal />}
+      {type === "messageFile" && <MessageFileModal />}
+      <DeleteMessageModal />
     </>
   );
 };

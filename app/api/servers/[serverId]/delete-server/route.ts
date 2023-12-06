@@ -1,6 +1,7 @@
+import { NextResponse } from "next/server";
+
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function DELETE(
   req: Request,
@@ -8,7 +9,6 @@ export async function DELETE(
 ) {
   try {
     const profile = await currentProfile();
-    console.log(params.serverId);
 
     if (!profile) {
       return new NextResponse("Unauthorized", { status: 401 });

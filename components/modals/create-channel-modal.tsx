@@ -1,5 +1,13 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ChannelType } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { useModal } from "@/app/hooks/use-modal-store";
+import { useCreateChannel } from "@/app/services/server/createChannel";
 import {
   Dialog,
   DialogContent,
@@ -8,9 +16,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
@@ -21,19 +35,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { useModal } from "@/app/hooks/use-modal-store";
-import { useRouter } from "next/navigation";
-import useSWRMutation from "swr/mutation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ChannelType } from "@prisma/client";
-import { createChannel } from "@/app/services/server/createChannel";
 import { useToast } from "../ui/use-toast";
 
 interface FormData {
@@ -62,22 +63,27 @@ export const CreateChannelModal = () => {
     },
   });
 
-  const { trigger, isMutating } = useSWRMutation(
-    `/api/servers/${data.server?.id}/channels`,
-    createChannel
-  );
+  const { mutate } = useCreateChannel();
 
-  const onSubmit = (data: FormData) => {
-    trigger(data, {
-      onSuccess: () => {
-        toast({
-          variant: "success",
-          title: "Channel created successfully",
-        });
-        router.refresh();
-        handleClose();
+  const onSubmit = (formData: FormData) => {
+    mutate(
+      {
+        url: `/api/servers/${data.server?.id}/channels`,
+        arg: {
+          ...formData,
+        },
       },
-    });
+      {
+        onSuccess: () => {
+          toast({
+            variant: "success",
+            title: "Channel created successfully",
+          });
+          router.refresh();
+          handleClose();
+        },
+      }
+    );
   };
 
   const handleClose = () => {

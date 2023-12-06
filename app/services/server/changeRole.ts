@@ -1,5 +1,5 @@
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { stringify } from "qs";
 
 interface Request {
   body: {
@@ -10,12 +10,12 @@ interface Request {
   };
 }
 
-export async function changeRole(url: string, { arg }: { arg: Request }) {
-  return axios
-    .patch(url, arg.body, {
-      params: {
-        memberId: arg.params.memberId,
-      },
-    })
-    .then((res) => res.data);
+export function useChangeRole() {
+  const changeRole = async ({ url, arg }: { url: string; arg: Request }) => {
+    return axios
+      .patch(url, arg.body, { params: { memberId: arg.params.memberId } })
+      .then((res) => res.data);
+  };
+
+  return useMutation({ mutationFn: changeRole });
 }

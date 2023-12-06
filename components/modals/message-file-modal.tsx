@@ -6,11 +6,10 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { useModal } from "@/app/hooks/use-modal-store";
-import { useCreateServer } from "@/app/services/server/createServer";
+import { useMessageFileUpload } from "@/app/services/chat/messageFileUpload";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -27,32 +26,47 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
 
 interface FormData {
-  name: string;
-  imageUrl: string;
+  fileUrl: string;
 }
 
 const schema = z.object({
-  name: z.string().min(1),
-  imageUrl: z.string().url(),
+  fileUrl: z.string().url(),
 });
 
-export const InitiaLmodal = () => {
-  const { onClose } = useModal();
-  const { createNewServer, swr } = useCreateServer();
+export const MessageFileModal = () => {
+  const { onClose, isOpen, data } = useModal();
   const [isLoaded, setIsLoaded] = useState(false);
+  const { mutate } = useMessageFileUpload();
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: "",
-      imageUrl: "",
+      fileUrl: "",
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    createNewServer(data);
+  const onSubmit = (formData: FormData) => {
+    mutate(
+      {
+        url: data.apiUrl || "",
+        arg: {
+          body: {
+            fileUrl: formData.fileUrl,
+            content: formData.fileUrl,
+          },
+          params: {
+            ...data.query,
+          },
+        },
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          onClose();
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -66,14 +80,10 @@ export const InitiaLmodal = () => {
   return (
     <Dialog
       onOpenChange={onClose}
-      open>
+      open={isOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Customize your server</DialogTitle>
-          <DialogDescription>
-            Give your server a personality, where every interaction is a
-            conversation, not just code.
-          </DialogDescription>
+          <DialogTitle>Attach a file</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -81,38 +91,30 @@ export const InitiaLmodal = () => {
             onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormDescription>Give your server a name</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="imageUrl"
+              name="fileUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Image</FormLabel>
                   <FormControl className="text-center">
                     <FileUpload
-                      endpoint="serverImage"
+                      endpoint="messageFile"
                       value={field.value}
                       onChange={field.onChange}
                     />
                   </FormControl>
-                  <FormDescription>Give server the avatar</FormDescription>
+                  <FormDescription>Upload your photo</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button>Create</Button>
+              <Button
+                variant={"destructive"}
+                onClick={onClose}
+                type="button">
+                Cancel
+              </Button>
+              <Button>Confirm</Button>
             </DialogFooter>
           </form>
         </Form>

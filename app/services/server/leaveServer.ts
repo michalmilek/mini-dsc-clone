@@ -1,5 +1,10 @@
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-export async function leaveServer(url: string, { arg }: { arg: any }) {
-  return axios.patch(url).then((res) => res.data);
+export function useLeaveServer() {
+  const leaveServer = async (url: string) => {
+    return axios.patch(url).then((res) => res.data);
+  };
+
+  return useMutation({ mutationFn: leaveServer });
 }

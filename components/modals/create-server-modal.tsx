@@ -1,5 +1,12 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { useModal } from "@/app/hooks/use-modal-store";
+import { useGenerateNewServer } from "@/app/services/server/generateNewServer";
 import {
   Dialog,
   DialogContent,
@@ -8,9 +15,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+
+import FileUpload from "../file-upload";
+import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
@@ -21,12 +28,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import FileUpload from "../file-upload";
-import { useModal } from "@/app/hooks/use-modal-store";
-import { useRouter } from "next/navigation";
-import useSWRMutation from "swr/mutation";
-import { createNewServerFn } from "@/app/services/server/createServer";
 
 interface FormData {
   name: string;
@@ -39,10 +40,7 @@ const schema = z.object({
 });
 
 export const CreateServerModal = () => {
-  const { trigger, isMutating } = useSWRMutation(
-    "/api/servers",
-    createNewServerFn
-  );
+  const { mutate } = useGenerateNewServer();
   const { type, isOpen, onOpen, onClose } = useModal();
   const router = useRouter();
   const form = useForm<FormData>({
@@ -54,13 +52,17 @@ export const CreateServerModal = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    trigger(data, {
-      onSuccess: (result) => {
-        console.log(result);
-        onClose();
-        router.refresh();
+    mutate(
+      {
+        arg: data,
       },
-    });
+      {
+        onSuccess: (result) => {
+          onClose();
+          router.refresh();
+        },
+      }
+    );
   };
 
   const handleClose = () => {

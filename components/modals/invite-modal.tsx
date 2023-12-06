@@ -1,5 +1,14 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Check, Copy, RefreshCcw } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { useModal } from "@/app/hooks/use-modal-store";
+import { useGenerateNewServer } from "@/app/services/server/generateNewServer";
 import {
   Dialog,
   DialogContent,
@@ -8,9 +17,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { cn } from "@/lib/utils";
+
+import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
@@ -21,17 +30,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import FileUpload from "../file-upload";
-import { useModal } from "@/app/hooks/use-modal-store";
-import { useRouter } from "next/navigation";
-import useSWRMutation from "swr/mutation";
-import { createNewServerFn } from "@/app/services/server/createServer";
-import { useState } from "react";
-import { Check, Copy, RefreshCcw } from "lucide-react";
 import { useToast } from "../ui/use-toast";
-import { generateNewServer } from "@/app/services/server/generateNewServer";
-import { cn } from "@/lib/utils";
 
 interface FormData {
   name: string;
@@ -63,17 +62,10 @@ export const InviteModal = () => {
     }
   };
 
-  const { trigger, isMutating } = useSWRMutation(
-    "/api/servers",
-    createNewServerFn
-  );
   const {
-    trigger: generateNewServerFn,
-    isMutating: isMutatingGenerateNewServer,
-  } = useSWRMutation(
-    `/api/servers/${server?.id}/invite-code`,
-    generateNewServer
-  );
+    mutate: generateNewServerFn,
+    isPending: isMutatingGenerateNewServer,
+  } = useGenerateNewServer();
 
   const router = useRouter();
   const form = useForm<FormData>({
@@ -86,7 +78,6 @@ export const InviteModal = () => {
   const onSubmit = (data: FormData) => {
     // trigger(data, {
     //   onSuccess: (result) => {
-    //     console.log(result);
     //     onClose();
     //     router.refresh();
     //   },
@@ -96,7 +87,11 @@ export const InviteModal = () => {
   const generateNewLink = async () => {
     if (server?.id) {
       generateNewServerFn(
-        { serverId: server.id },
+        {
+          arg: {
+            serverId: server.id,
+          },
+        },
         {
           onSuccess: (data) => {
             onOpen("invite", { server: data });

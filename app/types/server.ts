@@ -1,4 +1,4 @@
-import { Channel, MemberRole } from "@prisma/client";
+import { Channel, Member, MemberRole, Message, Profile } from "@prisma/client";
 
 export interface NewServerRequest {
   name: string;
@@ -59,3 +59,7 @@ export interface MemberChat {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type MessageWithMember = Message & {
+  member: Member & { profile: Profile };
+};

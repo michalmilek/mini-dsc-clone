@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import ModalsProvider from "@/components/providers/modals-provider";
+import QueryProvider from "@/components/providers/query-provider";
 import { SocketProvider } from "@/components/providers/socket-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
@@ -34,11 +35,13 @@ export default function RootLayout({
             enableSystem
             storageKey="customDiscordTheme"
             disableTransitionOnChange>
-            <SocketProvider>
-              <ModalsProvider />
-              <Toaster />
-              {children}
-            </SocketProvider>
+            <QueryProvider>
+              <SocketProvider>
+                <ModalsProvider />
+                <Toaster />
+                {children}
+              </SocketProvider>
+            </QueryProvider>
           </ThemeProvider>
         </body>
       </html>

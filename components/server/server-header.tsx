@@ -30,8 +30,8 @@ const ServerHeader = ({ channel, type, member }: Props) => {
   }
 
   return (
-    <header className="flex-1 p:2 sm:p-6 justify-between flex flex-col h-screen">
-      <div className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
+    <header className="flex-1 p:2 sm:p-6 justify-between flex flex-col border-b-2 border-gray-200">
+      <div className="flex sm:items-center justify-between py-3 ">
         <div className="relative flex items-center space-x-4">
           <div className="flex flex-col leading-tight">
             <div className="text-2xl mt-1 flex items-center gap-2">

@@ -1,11 +1,10 @@
 "use client";
 
-import { ChannelType } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import * as z from "zod";
 
 import { useModal } from "@/app/hooks/use-modal-store";
-import { useLeaveServer } from "@/app/services/server/leaveServer";
+import { useDeleteMessage } from "@/app/services/chat/deleteMessage";
 import {
   Dialog,
   DialogContent,
@@ -18,39 +17,39 @@ import {
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";
 
-interface FormData {
-  name: string;
-  type: ChannelType;
-}
-
-const schema = z.object({
-  name: z.string().min(1),
-  type: z
-    .string()
-    .refine(
-      (value) => ["TEXT", "AUDIO", "VIDEO"].includes(value),
-      "Type must be one of: TEXT, AUDIO, or VIDEO"
-    ),
-});
-
-export const LeaveServerModal = () => {
+export const DeleteMessageModal = () => {
   const { type, isOpen, onOpen, onClose, data } = useModal();
   const router = useRouter();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const { mutate } = useLeaveServer();
+  const { mutate } = useDeleteMessage();
 
   const onClick = () => {
-    mutate(`/api/servers/${data.server?.id}/leave-server`, {
-      onSuccess: (res) => {
-        toast({
-          variant: "success",
-          title: `You successfully leaved ${res.name}`,
-        });
-        router.refresh();
-        router.push("/");
-      },
-    });
+    if (data.query) {
+      mutate(
+        {
+          url: data.apiUrl || "",
+          args: {
+            params: {
+              ...data.query,
+            },
+          },
+        },
+        {
+          onSuccess: () => {
+            toast({
+              variant: "success",
+              title: `You've successfully deleted message`,
+            });
+            queryClient.invalidateQueries({
+              queryKey: ["messages"],
+            });
+            onClose();
+          },
+        }
+      );
+    }
   };
 
   const handleClose = () => {
@@ -63,9 +62,9 @@ export const LeaveServerModal = () => {
       onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Are you sure you want to leave us?</DialogTitle>
+          <DialogTitle>Delete message</DialogTitle>
           <DialogDescription>
-            Friends will be sad to see you leave us. 😥
+            Are you sure you want to remove this message?
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2">
@@ -79,7 +78,7 @@ export const LeaveServerModal = () => {
           <Button
             onClick={onClick}
             className="w-full sm:w-[50%]">
-            Leave
+            Delete
           </Button>
         </DialogFooter>
       </DialogContent>

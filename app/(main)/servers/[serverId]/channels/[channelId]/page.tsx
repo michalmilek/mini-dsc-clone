@@ -1,5 +1,10 @@
+import { redirectToSignIn } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+
 import ChatInput from "@/components/chat/chat-input";
+import { ChatMessages } from "@/components/chat/chat-messages";
 import ServerHeader from "@/components/server/server-header";
+import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
 const ChannelIdPage = async ({
@@ -7,6 +12,12 @@ const ChannelIdPage = async ({
 }: {
   params: { serverId: string; channelId: string };
 }) => {
+  const profile = await currentProfile();
+
+  if (!profile) {
+    return redirectToSignIn();
+  }
+
   const { channelId } = params;
 
   const channel = await db.channel.findUnique({
@@ -15,15 +26,36 @@ const ChannelIdPage = async ({
     },
   });
 
-  if (!channel) {
-    return null;
+  const member = await db.member.findFirst({
+    where: {
+      serverId: params.serverId,
+      profileId: profile.id,
+    },
+  });
+
+  if (!member || !channel) {
+    return redirect("/");
   }
 
   return (
-    <div>
+    <div className="h-screen overflow-y-hidden justify-between flex flex-col">
       <ServerHeader
         type="channel"
         channel={channel}
+      />
+      <ChatMessages
+        apiUrl="/api/messages"
+        member={member}
+        type="channel"
+        name={channel.name}
+        socketUrl="/api/socket/messages"
+        socketQuery={{
+          channelId: channelId,
+          serverId: channel.serverId,
+        }}
+        paramKey="channelId"
+        paramValue={channel.id}
+        chatId={channel.id}
       />
       <ChatInput
         name={channel.name}

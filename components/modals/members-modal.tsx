@@ -1,5 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+import { useModal } from "@/app/hooks/use-modal-store";
+import { ServerWithMembersAndChannels } from "@/app/types/server";
 import {
   Dialog,
   DialogContent,
@@ -8,13 +12,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
 
-import { useModal } from "@/app/hooks/use-modal-store";
-import { ServerWithMembersAndChannels } from "@/app/types/server";
-import Member from "../members/member";
 import Members from "../members/members";
+import { Button } from "../ui/button";
 
 export const MembersModal = () => {
   const { data, onClose } = useModal();

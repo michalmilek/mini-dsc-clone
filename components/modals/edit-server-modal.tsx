@@ -1,5 +1,12 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+import { useModal } from "@/app/hooks/use-modal-store";
+import { useEditServer } from "@/app/services/server/editServer";
 import {
   Dialog,
   DialogContent,
@@ -8,9 +15,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+
+import FileUpload from "../file-upload";
+import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
@@ -21,13 +28,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import FileUpload from "../file-upload";
-import { useModal } from "@/app/hooks/use-modal-store";
-import { useRouter } from "next/navigation";
-import useSWRMutation from "swr/mutation";
-import { createNewServerFn } from "@/app/services/server/createServer";
-import { editServer } from "@/app/services/server/editServer";
 import { useToast } from "../ui/use-toast";
 
 interface FormData {
@@ -44,10 +44,7 @@ export const EditServerModal = () => {
   const { toast } = useToast();
   const { type, isOpen, onOpen, onClose, data } = useModal();
   const { server } = data;
-  const { trigger, isMutating } = useSWRMutation(
-    `/api/servers/${server?.id}`,
-    editServer
-  );
+  const { mutate } = useEditServer();
   const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -58,17 +55,23 @@ export const EditServerModal = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    trigger(data, {
-      onSuccess: (result) => {
-        onClose();
-        form.reset();
-        router.refresh();
-        toast({
-          title: "User edited succesfully",
-          variant: "success",
-        });
+    mutate(
+      {
+        url: `/api/servers/${server?.id}`,
+        arg: data,
       },
-    });
+      {
+        onSuccess: (result) => {
+          onClose();
+          form.reset();
+          router.refresh();
+          toast({
+            title: "User edited succesfully",
+            variant: "success",
+          });
+        },
+      }
+    );
   };
 
   const handleClose = () => {

@@ -1,5 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
+import { useModal } from "@/app/hooks/use-modal-store";
+import { useDeleteChannel } from "@/app/services/server/deleteChannel";
 import {
   Dialog,
   DialogContent,
@@ -8,48 +12,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
+
 import { Button } from "../ui/button";
-import { useModal } from "@/app/hooks/use-modal-store";
-import { useRouter } from "next/navigation";
-import useSWRMutation from "swr/mutation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ChannelType } from "@prisma/client";
-import { createChannel } from "@/app/services/server/createChannel";
 import { useToast } from "../ui/use-toast";
-import { leaveServer } from "@/app/services/server/leaveServer";
-import { deleteServer } from "@/app/services/server/deleteServer";
 
 export const DeleteServerModal = () => {
   const { type, isOpen, onOpen, onClose, data } = useModal();
   const router = useRouter();
   const { toast } = useToast();
 
-  const { trigger, isMutating } = useSWRMutation(
-    `/api/servers/${data.server?.id}/delete-server`,
-    deleteServer
-  );
+  const { mutate } = useDeleteChannel();
 
   const onClick = () => {
-    trigger(undefined, {
+    mutate(`/api/servers/${data.server?.id}/delete-server`, {
       onSuccess: (res) => {
         toast({
           variant: "success",

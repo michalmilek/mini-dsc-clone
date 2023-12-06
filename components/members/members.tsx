@@ -1,9 +1,11 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import Member from "./member";
-import { ServerWithMembersAndChannels } from "@/app/types/server";
 import { useMemo } from "react";
+
+import { ServerWithMembersAndChannels } from "@/app/types/server";
+import { Card, CardContent } from "@/components/ui/card";
+
+import Member from "./member";
 
 const Members = ({ server }: { server: ServerWithMembersAndChannels }) => {
   const membersWithoutAdmin = useMemo(

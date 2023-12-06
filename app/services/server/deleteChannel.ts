@@ -1,5 +1,10 @@
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-export async function deleteChannel(url: string, { arg }: { arg: any }) {
-  return axios.delete(url).then((res) => res.data);
+export function useDeleteChannel() {
+  const deleteChannel = async (url: string) => {
+    return axios.delete(url).then((res) => res.data);
+  };
+
+  return useMutation({ mutationFn: deleteChannel });
 }

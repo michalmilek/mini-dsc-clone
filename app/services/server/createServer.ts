@@ -1,26 +1,12 @@
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+
 import { NewServerRequest } from "@/app/types/server";
-import axios, { AxiosError } from "axios";
-import useSWR from "swr";
 
-export const useCreateServer = () => {
-  const path = "/api/servers";
-  const swr = useSWR(path);
-
-  const createNewServer = async (form: NewServerRequest) => {
-    try {
-      const response = await axios.post(path, form);
-      swr.mutate(response.data);
-    } catch (error) {
-      throw error;
-    }
+export function useCreateNewServer() {
+  const createNewServer = async (arg: NewServerRequest) => {
+    return axios.post("/api/servers", arg).then((res) => res.data);
   };
 
-  return { createNewServer, swr };
-};
-
-export async function createNewServerFn(
-  url: string,
-  { arg }: { arg: NewServerRequest }
-) {
-  return axios.post(url, arg).then((res) => res.data);
+  return useMutation({ mutationFn: createNewServer });
 }
