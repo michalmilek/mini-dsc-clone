@@ -2,6 +2,7 @@ import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import { ChatDirectMessages } from "@/components/chat/chart-direct-messages";
+import { ChatDirectMediaRoom } from "@/components/chat/chat-direct-media-room";
 import ChatInput from "@/components/chat/chat-input";
 import ServerHeader from "@/components/server/server-header";
 import { currentProfile } from "@/lib/current-profile";
@@ -90,7 +91,7 @@ const MemberIdPage = async ({
     profile.id === memberOne.profileId ? memberTwo : memberOne;
 
   return (
-    <div className="h-screen overflow-y-hidden justify-between flex flex-col">
+    <div className="h-screen overflow-y-hidden justify-between flex flex-col relative">
       <ServerHeader
         type="conversation"
         member={otherMember}
@@ -116,6 +117,7 @@ const MemberIdPage = async ({
           conversationId: conversation.id,
         }}
       />
+      <ChatDirectMediaRoom chatId={conversation.id} />
     </div>
   );
 };

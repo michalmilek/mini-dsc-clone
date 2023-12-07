@@ -1,9 +1,10 @@
 "use client";
 
 import { Channel } from "@prisma/client";
-import { Bell, Hash, Search } from "lucide-react";
+import { Bell, Hash, Phone, Search, Video } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { useModal } from "@/app/hooks/use-modal-store";
 import { MemberChat } from "@/app/types/server";
 import { useSocket } from "@/components/providers/socket-provider";
 import { SocketIndicator } from "@/components/socket-indicator";
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const ServerHeader = ({ channel, type, member }: Props) => {
+  const { onOpen } = useModal();
   const [isMounted, setIsMounted] = useState(false);
 
   const { socket } = useSocket();
@@ -43,9 +45,7 @@ const ServerHeader = ({ channel, type, member }: Props) => {
                     src={member?.profile.imageUrl}
                     alt={member?.profile.name}
                   />
-                  <AvatarFallback>
-                    {type === "channel" ? channel?.name : member?.profile.name}
-                  </AvatarFallback>
+                  <AvatarFallback>{member?.profile.name}</AvatarFallback>
                 </Avatar>
               )}
               <span className="text-gray-700 dark:text-gray-300 mr-3">
@@ -64,6 +64,34 @@ const ServerHeader = ({ channel, type, member }: Props) => {
               ? channel?.createdAt.toLocaleDateString()
               : member?.createdAt.toLocaleDateString()}
           </span>
+          {type === "conversation" && (
+            <>
+              <Button
+                onClick={() =>
+                  onOpen("calls", {
+                    callData: {
+                      audio: true,
+                      video: false,
+                    },
+                  })
+                }
+                type="button">
+                <Phone />
+              </Button>
+              <Button
+                onClick={() =>
+                  onOpen("calls", {
+                    callData: {
+                      audio: true,
+                      video: true,
+                    },
+                  })
+                }
+                type="button">
+                <Video />
+              </Button>
+            </>
+          )}
           <Button type="button">
             <Search />
           </Button>
