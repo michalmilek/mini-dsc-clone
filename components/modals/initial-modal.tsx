@@ -1,12 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { useModal } from "@/app/hooks/use-modal-store";
-import { useCreateServer } from "@/app/services/server/createServer";
+import { useCreateNewServer } from "@/app/services/server/createServer";
 import {
   Dialog,
   DialogContent,
@@ -40,8 +41,9 @@ const schema = z.object({
 });
 
 export const InitiaLmodal = () => {
+  const router = useRouter();
   const { onClose } = useModal();
-  const { createNewServer, swr } = useCreateServer();
+  const { mutate } = useCreateNewServer();
   const [isLoaded, setIsLoaded] = useState(false);
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -52,7 +54,12 @@ export const InitiaLmodal = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    createNewServer(data);
+    mutate(data, {
+      onSuccess: () => {
+        router.refresh();
+        onClose();
+      },
+    });
   };
 
   useEffect(() => {

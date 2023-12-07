@@ -1,8 +1,11 @@
+import { redirectToSignIn } from "@clerk/nextjs";
+import { redirect } from "next/navigation";
+
+import { ChatDirectMessages } from "@/components/chat/chart-direct-messages";
+import ChatInput from "@/components/chat/chat-input";
 import ServerHeader from "@/components/server/server-header";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
-import { redirectToSignIn } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 
 const MemberIdPage = async ({
   params,
@@ -87,10 +90,31 @@ const MemberIdPage = async ({
     profile.id === memberOne.profileId ? memberTwo : memberOne;
 
   return (
-    <div>
+    <div className="h-screen overflow-y-hidden justify-between flex flex-col">
       <ServerHeader
         type="conversation"
         member={otherMember}
+      />
+      <ChatDirectMessages
+        apiUrl="/api/direct-messages"
+        member={currentMember}
+        type="conversation"
+        name={otherMember.profile.name}
+        socketUrl="/api/socket/direct-messages"
+        socketQuery={{
+          conversationId: conversation.id,
+        }}
+        paramKey="conversationId"
+        paramValue={conversation.id}
+        chatId={conversation.id}
+      />
+      <ChatInput
+        name={otherMember.profile.name}
+        type="channel"
+        apiUrl="/api/socket/direct-messages"
+        query={{
+          conversationId: conversation.id,
+        }}
       />
     </div>
   );

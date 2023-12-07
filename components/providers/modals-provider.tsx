@@ -18,7 +18,6 @@ import { MembersModal } from "../modals/members-modal";
 const ModalsProvider = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const { type } = useModal();
-  console.log("🚀 ~ type:", type);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -39,7 +38,7 @@ const ModalsProvider = () => {
       {type === "deleteChannel" && <DeleteChannelModal />}
       {type === "editChannel" && <EditChannelModal />}
       {type === "messageFile" && <MessageFileModal />}
-      <DeleteMessageModal />
+      {type === "deleteMessage" && <DeleteMessageModal />}
     </>
   );
 };

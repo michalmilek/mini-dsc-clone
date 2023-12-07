@@ -2,6 +2,7 @@ import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
 import ChatInput from "@/components/chat/chat-input";
+import { ChatMediaRoom } from "@/components/chat/chat-media-room";
 import { ChatMessages } from "@/components/chat/chat-messages";
 import ServerHeader from "@/components/server/server-header";
 import { currentProfile } from "@/lib/current-profile";
@@ -38,7 +39,7 @@ const ChannelIdPage = async ({
   }
 
   return (
-    <div className="h-screen overflow-y-hidden justify-between flex flex-col">
+    <div className="h-screen overflow-y-hidden justify-between flex flex-col relative">
       <ServerHeader
         type="channel"
         channel={channel}
@@ -57,6 +58,20 @@ const ChannelIdPage = async ({
         paramValue={channel.id}
         chatId={channel.id}
       />
+      {channel.type === "VIDEO" && (
+        <ChatMediaRoom
+          chatId={channelId}
+          audio={true}
+          video={true}
+        />
+      )}
+      {channel.type === "AUDIO" && (
+        <ChatMediaRoom
+          chatId={channelId}
+          audio={true}
+          video={false}
+        />
+      )}
       <ChatInput
         name={channel.name}
         type="channel"
