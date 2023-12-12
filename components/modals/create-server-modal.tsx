@@ -1,12 +1,11 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import { useModal } from "@/app/hooks/use-modal-store";
-import { useGenerateNewServer } from "@/app/services/server/generateNewServer";
+import { useCreateNewServer } from "@/app/services/server/createServer";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import FileUpload from "../file-upload";
 import { Button } from "../ui/button";
@@ -40,7 +40,7 @@ const schema = z.object({
 });
 
 export const CreateServerModal = () => {
-  const { mutate } = useGenerateNewServer();
+  const { mutate, isPending } = useCreateNewServer();
   const { type, isOpen, onOpen, onClose } = useModal();
   const router = useRouter();
   const form = useForm<FormData>({
@@ -54,7 +54,7 @@ export const CreateServerModal = () => {
   const onSubmit = (data: FormData) => {
     mutate(
       {
-        arg: data,
+        ...data,
       },
       {
         onSuccess: (result) => {
@@ -125,7 +125,7 @@ export const CreateServerModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
-              <Button disabled={isMutating}>Create</Button>
+              <Button disabled={isPending}>Create</Button>
             </DialogFooter>
           </form>
         </Form>

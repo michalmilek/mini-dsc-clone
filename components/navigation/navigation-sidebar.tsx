@@ -1,9 +1,9 @@
-import { UserButton } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import React from "react";
 
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
+import { UserButton } from "@clerk/nextjs";
 
 import { ModeToggle } from "../mode-toggle";
 import { ScrollArea } from "../ui/scroll-area";
@@ -27,14 +27,14 @@ const NavigationSidebar = async () => {
   });
 
   return (
-    <aside className="fixed inset-y-0 left-0 flex flex-col justify-between  items-center p-3 bg-white dark:bg-black shadow w-32 z-30">
-      <div className="flex flex-col">
+    <aside className="fixed inset-y-0 left-0 flex flex-col justify-between  items-center py-3 bg-white dark:bg-black shadow w-32 z-30">
+      <div className="flex flex-col w-full">
         <div className="space-y-3">
           <NavigationAdd label="Create server" />
 
           <div className="flex-1">
-            <ScrollArea className="max-h-[500px] z-50">
-              <ul className="pt-2 pb-4 space-y-1 text-sm flex flex-col items-center overflow-y-scroll max-h-[500px]">
+            <ScrollArea className="max-h-[500px]">
+              <ul className="pt-2 pb-4 space-y-1 text-sm flex flex-col items-center justify-center w-full">
                 {servers.map((item, index) => (
                   <React.Fragment key={item.id + " server"}>
                     <NavigationItem server={item} />

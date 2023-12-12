@@ -2,16 +2,16 @@
 
 import "@livekit/components-styles";
 
-import {
-  AudioConference,
-  LiveKitRoom,
-  VideoConference,
-} from "@livekit/components-react";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useModal } from "@/app/hooks/use-modal-store";
 import { useGetMedia } from "@/app/services/chat/getMedia";
+import {
+  AudioConference,
+  LiveKitRoom,
+  VideoConference,
+} from "@livekit/components-react";
 
 interface MediaRoomProps {
   chatId: string;

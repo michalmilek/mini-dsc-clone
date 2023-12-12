@@ -1,6 +1,5 @@
-import { currentUser, redirectToSignIn } from "@clerk/nextjs";
-
 import { db } from "@/lib/db";
+import { currentUser, redirectToSignIn } from "@clerk/nextjs";
 
 interface Profile {
   id: string;

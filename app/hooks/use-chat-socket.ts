@@ -1,7 +1,7 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 import { useSocket } from "@/components/providers/socket-provider";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ChatSocketProps = {
   addKey: string;

@@ -1,6 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Camera, Paperclip, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -11,6 +10,7 @@ import { useSendMessage } from "@/app/services/chat/sendMessage";
 import EmojiPicker from "@/components/chat/emoji-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 interface ChatInputProps {
   apiUrl: string;

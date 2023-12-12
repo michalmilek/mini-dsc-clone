@@ -1,6 +1,5 @@
 "use client";
 
-import { Channel } from "@prisma/client";
 import { Bell, Hash, Phone, Search, Video } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -10,6 +9,7 @@ import { useSocket } from "@/components/providers/socket-provider";
 import { SocketIndicator } from "@/components/socket-indicator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Channel } from "@prisma/client";
 
 interface Props {
   type: "conversation" | "channel";

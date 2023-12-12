@@ -1,6 +1,5 @@
 "use client";
 
-import { ChannelType, MemberRole } from "@prisma/client";
 import { Edit, Hash, Mic, Plus, Trash, Video } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ChannelType, MemberRole } from "@prisma/client";
 
 interface ServerSectionProps {
   label: string;

@@ -1,6 +1,5 @@
 "use client";
 
-import { ChannelType } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import * as z from "zod";
 
@@ -14,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ChannelType } from "@prisma/client";
 
 import { Button } from "../ui/button";
 import { useToast } from "../ui/use-toast";

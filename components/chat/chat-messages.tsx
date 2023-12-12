@@ -1,6 +1,5 @@
 "use client";
 
-import { Member } from "@prisma/client";
 import { MoreHorizontal } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
@@ -13,6 +12,7 @@ import ChatLoader from "@/components/chat/chat-loader";
 import ChatMessage from "@/components/chat/chat-message";
 import { ChatWelcome } from "@/components/chat/chat-welcome";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Member } from "@prisma/client";
 
 interface Props {
   name: string;

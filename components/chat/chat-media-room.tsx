@@ -3,16 +3,16 @@
 // CSS should be explicitly imported if using the default UI
 import "@livekit/components-styles";
 
-import {
-  AudioConference,
-  LiveKitRoom,
-  VideoConference,
-} from "@livekit/components-react";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useGetMedia } from "@/app/services/chat/getMedia";
 import { Button } from "@/components/ui/button";
+import {
+  AudioConference,
+  LiveKitRoom,
+  VideoConference,
+} from "@livekit/components-react";
 
 interface MediaRoomProps {
   chatId: string;

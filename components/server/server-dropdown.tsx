@@ -1,5 +1,4 @@
 "use client";
-import { $Enums, Server } from "@prisma/client";
 import {
   ArrowDown,
   Plus,
@@ -20,6 +19,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { $Enums, Server } from "@prisma/client";
+
 interface Props {
   server: Server;
   role?: $Enums.MemberRole;

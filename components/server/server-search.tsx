@@ -1,16 +1,9 @@
 "use client";
 
-import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Search,
-  Settings,
-  Smile,
-  User,
-} from "lucide-react";
-import { Input } from "../ui/input";
+import { Search } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+
 import {
   CommandDialog,
   CommandEmpty,
@@ -18,10 +11,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-  CommandShortcut,
 } from "../ui/command";
-import { useParams, useRouter } from "next/navigation";
 
 interface ServerSearchProps {
   data: {

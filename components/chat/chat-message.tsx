@@ -1,8 +1,5 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Member } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
 import { format, formatDistanceToNow } from "date-fns";
 import { Edit, ShieldAlert, ShieldCheck, Trash, User } from "lucide-react";
 import Image from "next/image";
@@ -24,6 +21,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Member } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface FormData {
   content: string;
