@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 
 import { useModal } from "@/app/hooks/use-modal-store";
+import { AddFriendModal } from "@/components/modals/add-friend-modal";
 import { DeleteMessageModal } from "@/components/modals/delete-message-modal";
 import { MessageFileModal } from "@/components/modals/message-file-modal";
 
@@ -39,6 +40,7 @@ const ModalsProvider = () => {
       {type === "editChannel" && <EditChannelModal />}
       {type === "messageFile" && <MessageFileModal />}
       {type === "deleteMessage" && <DeleteMessageModal />}
+      {type === "inviteFriend" && <AddFriendModal />}
     </>
   );
 };

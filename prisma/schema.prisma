@@ -18,12 +18,86 @@ model Profile {
   imageUrl String @db.Text
   email    String @db.Text
 
+  senderInvitations   FriendInvitation[] @relation("Sender")
+  receiverInvitations FriendInvitation[] @relation("Receiver")
+
+    friendOne   ConversationBetweenFriends[] @relation("FriendOne")
+  friendTwo ConversationBetweenFriends[] @relation("FriendTwo")
+
+
+  directMessagesBetweenFriends DirectMessageBetweenFriends[]
+
+
   servers  Server[]
   members  Member[]
   channels Channel[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum FriendInvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model FriendInvitation {
+  id       String  @id @default(uuid())
+  senderId String
+  sender   Profile @relation("Sender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  receiverId String
+  receiver   Profile @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  status FriendInvitationStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([senderId, receiverId])
+  @@index([senderId])
+  @@index([receiverId])
+}
+
+
+model ConversationBetweenFriends {
+  id String @id @default(uuid())
+
+  friendOneId String
+  friendOne   Profile @relation("FriendOne", fields: [friendOneId], references: [id], onDelete: Cascade)
+
+  friendTwoId String
+  friendTwo   Profile @relation("FriendTwo", fields: [friendTwoId], references: [id], onDelete: Cascade)
+
+  directMessagesBetweenFriends DirectMessageBetweenFriends[]
+    createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([friendOneId, friendTwoId])
+  @@index([friendOneId])
+  @@index([friendTwoId])
+}
+
+model DirectMessageBetweenFriends {
+  id      String  @id @default(uuid())
+  content String  @db.Text
+  fileUrl String? @db.Text
+  seen    Boolean @default(false)
+
+  friendId String
+  friend   Profile @relation(fields: [friendId], references: [id], onDelete: Cascade)
+
+  conversationId String
+  conversation   ConversationBetweenFriends @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  deleted Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([friendId])
+  @@index([conversationId])
 }
 
 model Server {

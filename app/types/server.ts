@@ -63,3 +63,13 @@ export interface MemberChat {
 export type MessageWithMember = Message & {
   member: Member & { profile: Profile };
 };
+
+export interface FriendshipFriend {
+  id: string;
+  userId: string;
+  name: string;
+  imageUrl: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
