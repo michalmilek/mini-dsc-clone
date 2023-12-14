@@ -1,20 +1,21 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { useModal } from "@/app/hooks/use-modal-store";
-import { AddFriendModal } from "@/components/modals/add-friend-modal";
-import { DeleteMessageModal } from "@/components/modals/delete-message-modal";
-import { MessageFileModal } from "@/components/modals/message-file-modal";
+import { useModal } from '@/app/hooks/use-modal-store';
+import { AddFriendModal } from '@/components/modals/add-friend-modal';
+import { BlacklistModal } from '@/components/modals/blacklist-modal';
+import { DeleteMessageModal } from '@/components/modals/delete-message-modal';
+import { MessageFileModal } from '@/components/modals/message-file-modal';
 
-import { CreateChannelModal } from "../modals/create-channel-modal";
-import { CreateServerModal } from "../modals/create-server-modal";
-import { DeleteChannelModal } from "../modals/delete-channel-modal";
-import { DeleteServerModal } from "../modals/delete-server-modal";
-import { EditChannelModal } from "../modals/edit-channel-modal";
-import { EditServerModal } from "../modals/edit-server-modal";
-import { InviteModal } from "../modals/invite-modal";
-import { LeaveServerModal } from "../modals/leave-server-modal";
-import { MembersModal } from "../modals/members-modal";
+import { CreateChannelModal } from '../modals/create-channel-modal';
+import { CreateServerModal } from '../modals/create-server-modal';
+import { DeleteChannelModal } from '../modals/delete-channel-modal';
+import { DeleteServerModal } from '../modals/delete-server-modal';
+import { EditChannelModal } from '../modals/edit-channel-modal';
+import { EditServerModal } from '../modals/edit-server-modal';
+import { InviteModal } from '../modals/invite-modal';
+import { LeaveServerModal } from '../modals/leave-server-modal';
+import { MembersModal } from '../modals/members-modal';
 
 const ModalsProvider = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -41,6 +42,7 @@ const ModalsProvider = () => {
       {type === "messageFile" && <MessageFileModal />}
       {type === "deleteMessage" && <DeleteMessageModal />}
       {type === "inviteFriend" && <AddFriendModal />}
+      {type === "blacklist" && <BlacklistModal />}
     </>
   );
 };

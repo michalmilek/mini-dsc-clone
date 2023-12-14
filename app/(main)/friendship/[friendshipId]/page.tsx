@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 import ChatFriendshipHeader from "@/components/chat/chat-friendship-header";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
@@ -24,11 +26,7 @@ const Page = async ({ params }: { params: { friendshipId: string } }) => {
   });
 
   if (!friendship) {
-    return (
-      <div className="w-full flex justify-center items-center h-full">
-        <div className="text-2xl">No friendship found</div>
-      </div>
-    );
+    return redirect("/");
   }
 
   const member =

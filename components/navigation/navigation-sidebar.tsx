@@ -56,7 +56,17 @@ const NavigationSidebar = async () => {
       friendTwo: true,
     },
   });
-  console.log("🚀 ~ friends:", friends);
+
+  const blacklist = await db.friendInvitation.findMany({
+    where: {
+      senderId: profile.id,
+      status: "DECLINED",
+    },
+    include: {
+      receiver: true,
+    },
+  });
+  const receivers = blacklist.map((item) => item.receiver);
 
   return (
     <aside className="fixed inset-y-0 left-0 flex flex-col justify-between  items-center py-3 bg-white dark:bg-black shadow w-32 z-30">
@@ -111,7 +121,7 @@ const NavigationSidebar = async () => {
       </div>
 
       <div className="flex items-center justify-center flex-col space-y-3">
-        <ProfileSettings />
+        <ProfileSettings blacklist={receivers} />
         <ModeToggle />
         <UserButton afterSignOutUrl="/" />
       </div>
