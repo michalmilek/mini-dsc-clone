@@ -89,7 +89,7 @@ const NavigationSidebar = async () => {
           <div className="flex flex-col w-full items-center justify-center">
             <NavigationInviteFriend />
             {invitations.length > 0 && (
-              <ScrollArea className="max-h-[500px]">
+              <ScrollArea className="max-h-[500px] mt-4">
                 <span className="text-lg font-bold text-center">
                   Invitations
                 </span>
@@ -104,7 +104,7 @@ const NavigationSidebar = async () => {
               </ScrollArea>
             )}
             {friends.length > 0 && (
-              <ScrollArea className="max-h-[500px]">
+              <ScrollArea className="max-h-[500px] mt-4">
                 <span className="text-lg font-bold text-center">Friends</span>
                 <ul className="pt-2 pb-4 space-y-1 text-sm flex flex-col items-center justify-center w-full">
                   {friends.map((item, index) => (

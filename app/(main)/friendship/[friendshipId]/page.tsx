@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 
+import { ChatFriendMessages } from "@/components/chat/chat-friend-messages";
 import ChatFriendshipHeader from "@/components/chat/chat-friendship-header";
+import ChatInput from "@/components/chat/chat-input";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
@@ -35,11 +37,34 @@ const Page = async ({ params }: { params: { friendshipId: string } }) => {
       : friendship.friendOne;
 
   return (
-    <div className="w-full h-full pl-32">
+    <div className="h-screen overflow-y-hidden justify-between flex flex-col relative pl-32">
       <ChatFriendshipHeader
         member={member}
         friendship={friendship}
       />
+      <ChatFriendMessages
+        myId={profile.id}
+        apiUrl="/api/friend-messages"
+        member={member}
+        type="conversation"
+        name={member.name}
+        socketUrl="/api/socket/friend-messages"
+        socketQuery={{
+          conversationId: friendship.id,
+        }}
+        paramKey="friendshipId"
+        paramValue={friendship.id}
+        chatId={friendship.id}
+      />
+      <ChatInput
+        name={member.name}
+        type="conversation"
+        apiUrl="/api/socket/friend-messages"
+        query={{
+          friendshipId: friendship.id,
+        }}
+      />
+      {/* <ChatDirectMediaRoom chatId={conversation.id} /> */}
     </div>
   );
 };
