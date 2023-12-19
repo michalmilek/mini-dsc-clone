@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { useBlockUser } from "@/app/services/user/block-user";
 import { useRemoveFriend } from "@/app/services/user/remove-friend";
 import {
   ContextMenu,
@@ -21,11 +22,14 @@ const NavigationFriend = ({ friendship }: { friendship: Friendship }) => {
   const router = useRouter();
   const { toast } = useToast();
   const { user } = useUser();
-  console.log("🚀 ~ user:", user);
   const { mutate } = useRemoveFriend();
-
+  const { mutate: block } = useBlockUser();
+  const pathname = usePathname();
+  const member =
+    friendship.friendOne.imageUrl === user?.imageUrl
+      ? friendship.friendTwo
+      : friendship.friendOne;
   const [mounted, setMounted] = useState(false);
-  const params = useParams();
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -34,21 +38,19 @@ const NavigationFriend = ({ friendship }: { friendship: Friendship }) => {
     return null;
   }
 
-  const member =
-    friendship.friendOne.id === user?.id
-      ? friendship.friendTwo
-      : friendship.friendOne;
-
   if (!mounted) {
     return null;
   }
   return (
-    <li className={cn("w-full flex-col flex items-center justify-center")}>
+    <li
+      className={cn(
+        "w-full flex-col flex items-center justify-center p-4",
+        pathname?.includes(friendship.id) && "box"
+      )}>
       <Link href={`/friendship/${friendship.id}`}>
         <ContextMenu>
           <ContextMenuTrigger>
-            {" "}
-            <div className={cn("relative w-12 h-12")}>
+            <div className={cn(`relative w-12 h-12`)}>
               <Image
                 layout="fill"
                 src={member.imageUrl}
@@ -69,11 +71,24 @@ const NavigationFriend = ({ friendship }: { friendship: Friendship }) => {
                       description: `You removed ${member.name} from your friends.`,
                       variant: "success",
                     });
-                    router.refresh();
                   },
                 });
               }}>
               Remove Friend
+            </ContextMenuItem>
+            <ContextMenuItem
+              onClick={() => {
+                block(member.email, {
+                  onSuccess: () => {
+                    toast({
+                      title: "Blocked friend",
+                      description: `You succesfully blocked ${member.name}`,
+                      variant: "success",
+                    });
+                  },
+                });
+              }}>
+              Block user
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>

@@ -4,6 +4,7 @@ import React from "react";
 import NavigationFriend from "@/components/navigation/navigation-friend";
 import NavigationInvitation from "@/components/navigation/navigation-invitation";
 import NavigationInviteFriend from "@/components/navigation/navigation-invite-friend";
+import NavigationUpdateChecker from "@/components/navigation/navigation-update-checker";
 import ProfileSettings from "@/components/profile/profile-settings";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
@@ -37,6 +38,19 @@ const NavigationSidebar = async () => {
     },
     include: {
       sender: true,
+    },
+  });
+
+  const allInvitations = await db.friendInvitation.findMany({
+    where: {
+      OR: [
+        {
+          senderId: profile.id,
+        },
+        {
+          receiverId: profile.id,
+        },
+      ],
     },
   });
 
@@ -117,6 +131,11 @@ const NavigationSidebar = async () => {
               </ScrollArea>
             )}
           </div>
+          <NavigationUpdateChecker
+            id={profile.id}
+            allInvitations={allInvitations}
+            friends={friends}
+          />
         </div>
       </div>
 

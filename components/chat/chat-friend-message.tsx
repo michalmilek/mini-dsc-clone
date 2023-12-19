@@ -3,6 +3,7 @@
 import { format, formatDistanceToNow } from "date-fns";
 import { Edit, Trash } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -98,21 +99,26 @@ const ChatFriendMessage = ({
       className={`flex items-center justify-start w-full gap-2 ${
         isSelf ? "flex-row" : "flex-row-reverse"
       }`}>
-      <div
-        className="relative 
+      <Link href={`/profile/${message.friend.id}`}>
+        <div
+          className="relative 
         w-12 h-12">
-        <Image
-          layout="fill"
-          src={message.friend.imageUrl}
-          alt="Profile"
-          className="rounded-full"
-        />
-      </div>
-      <div className="flex flex-col justify-between items-start w-full">
+          <Image
+            layout="fill"
+            src={message.friend.imageUrl}
+            alt="Profile"
+            className="rounded-full"
+          />
+        </div>
+      </Link>
+      <div
+        className={`flex flex-col justify-between  ${
+          isSelf ? "items-start" : "items-end"
+        } w-full`}>
         <div
           className={`flex ${
             isSelf ? "flex-row" : "flex-row-reverse"
-          } items-center justify-start gap-1`}>
+          } items-center gap-2`}>
           <span className="text-xl font-bold">{message.friend.name}</span>
           <TooltipProvider>
             <Tooltip>

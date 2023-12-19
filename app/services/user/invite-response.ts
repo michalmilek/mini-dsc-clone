@@ -10,9 +10,12 @@ export const useInviteResponse = (inviteId: string) => {
     status: FriendInvitationStatus;
   }) => {
     try {
-      const response = await axios.post(`/api/friend-invitation/${inviteId}`, {
-        status: status as FriendInvitationStatus,
-      });
+      const response = await axios.post(
+        `/api/socket/friend-invitation/${inviteId}`,
+        {
+          status: status as FriendInvitationStatus,
+        }
+      );
       return response.data;
     } catch (error) {
       console.log(error);

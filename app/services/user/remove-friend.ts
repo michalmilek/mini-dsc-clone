@@ -5,7 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 export const useRemoveFriend = () => {
   const removeFriend = async (friendshipId: string) => {
     try {
-      const response = await axios.delete(`/api/friendship/${friendshipId}`);
+      const response = await axios.delete(
+        `/api/socket/friendship/${friendshipId}`
+      );
       return response.data;
     } catch (error) {
       console.log(error);

@@ -2,7 +2,7 @@
 
 import { Check, XIcon } from "lucide-react";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useInviteResponse } from "@/app/services/user/invite-response";
@@ -33,7 +33,7 @@ const NavigationInvitation = ({ invitation }: { invitation: Invitation }) => {
   const { toast } = useToast();
   const { mutate } = useInviteResponse(invitation.id);
   const [mounted, setMounted] = useState(false);
-  const params = useParams();
+
   useEffect(() => {
     setMounted(true);
   }, []);

@@ -14,7 +14,6 @@ export default async function handler(
 
   try {
     const profile = await currentProfileForPages(req);
-    console.log("🚀 ~ profile:", profile);
     const { content, fileUrl } = req.body;
     const { friendshipId } = req.query;
 

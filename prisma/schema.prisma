@@ -21,12 +21,13 @@ model Profile {
   senderInvitations   FriendInvitation[] @relation("Sender")
   receiverInvitations FriendInvitation[] @relation("Receiver")
 
-    friendOne   ConversationBetweenFriends[] @relation("FriendOne")
+  serverSenderInvitations   ServerInvitation[] @relation("ServerInvitationSender")
+  serverReceiverInvitations ServerInvitation[] @relation("ServerInvitationReceiver")
+
+  friendOne ConversationBetweenFriends[] @relation("FriendOne")
   friendTwo ConversationBetweenFriends[] @relation("FriendTwo")
 
-
   directMessagesBetweenFriends DirectMessageBetweenFriends[]
-
 
   servers  Server[]
   members  Member[]
@@ -60,7 +61,6 @@ model FriendInvitation {
   @@index([receiverId])
 }
 
-
 model ConversationBetweenFriends {
   id String @id @default(uuid())
 
@@ -71,8 +71,8 @@ model ConversationBetweenFriends {
   friendTwo   Profile @relation("FriendTwo", fields: [friendTwoId], references: [id], onDelete: Cascade)
 
   directMessagesBetweenFriends DirectMessageBetweenFriends[]
-    createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt                    DateTime                      @default(now())
+  updatedAt                    DateTime                      @updatedAt
 
   @@unique([friendOneId, friendTwoId])
   @@index([friendOneId])
@@ -109,13 +109,34 @@ model Server {
   profileId String
   profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
-  members  Member[]
-  channels Channel[]
+  members           Member[]
+  channels          Channel[]
+  serverInvitations ServerInvitation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([profileId])
+}
+
+model ServerInvitation {
+  id   String @id @default(uuid())
+
+  senderId String
+  sender   Profile @relation("ServerInvitationSender", fields: [senderId], references: [id])
+
+  receiverId String
+  receiver   Profile @relation("ServerInvitationReceiver", fields: [receiverId], references: [id])
+
+  serverId String
+  server   Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  status FriendInvitationStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([senderId, receiverId, serverId])
 }
 
 enum MemberRole {
