@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import * as z from "zod";
 
+import { revalidateLayout } from "@/app/actions/revalidateLayout";
 import { useModal } from "@/app/hooks/use-modal-store";
 import { useLeaveServer } from "@/app/services/server/leaveServer";
 import {
@@ -47,8 +48,9 @@ export const LeaveServerModal = () => {
           variant: "success",
           title: `You successfully leaved ${res.name}`,
         });
-        router.refresh();
+        onClose();
         router.push("/");
+        revalidateLayout();
       },
     });
   };

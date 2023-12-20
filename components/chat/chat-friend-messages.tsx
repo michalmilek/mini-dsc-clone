@@ -5,8 +5,10 @@ import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 import { animateScroll as scroll } from "react-scroll";
 
+import useAsync from "@/app/hooks/use-async";
 import { useChatSocket } from "@/app/hooks/use-chat-socket";
 import { useGetFriendMessages } from "@/app/services/chat/getFriendMessages";
+import { markAsRead } from "@/app/services/chat/markAsRead";
 import { MessageWithFriend } from "@/app/types/server";
 import ChatFriendMessage from "@/components/chat/chat-friend-message";
 import ChatLoader from "@/components/chat/chat-loader";
@@ -51,6 +53,7 @@ export const ChatFriendMessages = ({
     useGetFriendMessages({
       friendshipId: chatId,
     });
+  const { execute } = useAsync(markAsRead);
 
   const addKey = useMemo(() => `chat:${chatId}:messages`, [chatId]);
   const updateKey = useMemo(() => `chat:${chatId}:messages:update`, [chatId]);
@@ -60,6 +63,10 @@ export const ChatFriendMessages = ({
     updateKey,
     channelId: chatId,
   });
+
+  useEffect(() => {
+    execute(chatId);
+  }, [execute, chatId]);
 
   useEffect(() => {
     if (!data) {

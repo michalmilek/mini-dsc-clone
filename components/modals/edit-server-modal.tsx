@@ -1,34 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
-import { useModal } from "@/app/hooks/use-modal-store";
-import { useEditServer } from "@/app/services/server/editServer";
+import { useModal } from '@/app/hooks/use-modal-store';
+import { useEditServer } from '@/app/services/server/editServer';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
+    Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
+} from '@/components/ui/dialog';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import FileUpload from "../file-upload";
-import { Button } from "../ui/button";
+import FileUpload from '../file-upload';
+import { Button } from '../ui/button';
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { useToast } from "../ui/use-toast";
+    Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage
+} from '../ui/form';
+import { Input } from '../ui/input';
+import { useToast } from '../ui/use-toast';
 
 interface FormData {
   name: string;
@@ -66,7 +55,7 @@ export const EditServerModal = () => {
           form.reset();
           router.refresh();
           toast({
-            title: "User edited succesfully",
+            title: "User edited successfully",
             variant: "success",
           });
         },

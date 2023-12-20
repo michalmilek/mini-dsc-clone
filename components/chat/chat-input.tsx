@@ -1,16 +1,16 @@
 "use client";
 
-import { Camera, Paperclip, Send } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { Camera, Paperclip, Send } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
 
-import { useModal } from "@/app/hooks/use-modal-store";
-import { useSendMessage } from "@/app/services/chat/sendMessage";
-import EmojiPicker from "@/components/chat/emoji-picker";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useModal } from '@/app/hooks/use-modal-store';
+import { useSendMessage } from '@/app/services/chat/sendMessage';
+import EmojiPicker from '@/components/chat/emoji-picker';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 interface ChatInputProps {
   apiUrl: string;
@@ -60,7 +60,6 @@ const ChatInput = ({ apiUrl, query, name, type }: ChatInputProps) => {
       },
       {
         onSuccess: () => {
-          router.refresh();
           reset();
         },
       }

@@ -4,6 +4,8 @@ import React from "react";
 import NavigationFriend from "@/components/navigation/navigation-friend";
 import NavigationInvitation from "@/components/navigation/navigation-invitation";
 import NavigationInviteFriend from "@/components/navigation/navigation-invite-friend";
+import NavigationJoinServer from "@/components/navigation/navigation-join-server";
+import NavigationServerInvitation from "@/components/navigation/navigation-server-invitation";
 import NavigationUpdateChecker from "@/components/navigation/navigation-update-checker";
 import ProfileSettings from "@/components/profile/profile-settings";
 import { currentProfile } from "@/lib/current-profile";
@@ -71,6 +73,16 @@ const NavigationSidebar = async () => {
     },
   });
 
+  const serverInvitations = await db.serverInvitation.findMany({
+    where: {
+      receiverId: profile.id,
+      status: "PENDING",
+    },
+    include: {
+      server: true,
+    },
+  });
+
   const blacklist = await db.friendInvitation.findMany({
     where: {
       senderId: profile.id,
@@ -100,13 +112,29 @@ const NavigationSidebar = async () => {
               </ul>
             </ScrollArea>
           </div>
-          <div className="flex flex-col w-full items-center justify-center">
+          <div className="flex flex-col w-full items-center justify-center gap-2">
+            <NavigationJoinServer />
             <NavigationInviteFriend />
+            {serverInvitations.length > 0 && (
+              <ScrollArea className="max-h-[500px] mt-4 w-full">
+                <p className="text-lg font-bold text-center">
+                  Server Invitations
+                </p>
+                <ul className="pt-2 pb-4 space-y-1 text-sm flex flex-col items-center justify-center w-full">
+                  {serverInvitations.map((item, index) => (
+                    <React.Fragment key={item.id + " profile"}>
+                      <NavigationServerInvitation serverInvitation={item} />
+                      {index !== servers.length - 1 && <Separator />}
+                    </React.Fragment>
+                  ))}
+                </ul>
+              </ScrollArea>
+            )}
             {invitations.length > 0 && (
               <ScrollArea className="max-h-[500px] mt-4">
-                <span className="text-lg font-bold text-center">
-                  Invitations
-                </span>
+                <p className="text-lg font-bold text-center">
+                  Friend Invitations
+                </p>
                 <ul className="pt-2 pb-4 space-y-1 text-sm flex flex-col items-center justify-center w-full">
                   {invitations.map((item, index) => (
                     <React.Fragment key={item.id + " profile"}>
@@ -117,9 +145,10 @@ const NavigationSidebar = async () => {
                 </ul>
               </ScrollArea>
             )}
+
             {friends.length > 0 && (
               <ScrollArea className="max-h-[500px] mt-4">
-                <span className="text-lg font-bold text-center">Friends</span>
+                <p className="text-lg font-bold text-center">Friends</p>
                 <ul className="pt-2 pb-4 space-y-1 text-sm flex flex-col items-center justify-center w-full">
                   {friends.map((item, index) => (
                     <React.Fragment key={item.id + " profile"}>

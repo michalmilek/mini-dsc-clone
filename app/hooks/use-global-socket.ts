@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
-import { revalidateLayout } from "@/app/actions/revalidateLayout";
-import { useSocket } from "@/components/providers/socket-provider";
+import { revalidateLayout } from '@/app/actions/revalidateLayout';
+import { useSocket } from '@/components/providers/socket-provider';
 
 export const useGlobalSocket = (keys: string[]) => {
   const { socket } = useSocket();
@@ -16,6 +16,7 @@ export const useGlobalSocket = (keys: string[]) => {
       const invitationResponseKey = `navigation:${key}:invitationResponse`;
       const friendshipKey = `navigation:${key}:blockUser`;
       const deleteFriendshipKey = `navigation:${key}:deleteFriendship`;
+      const serverInvitationKey = `navigation:${key}:serverInvitationKey`;
 
       socket.on(addFriendKey, async () => {
         console.log("add friend");
@@ -36,6 +37,11 @@ export const useGlobalSocket = (keys: string[]) => {
         console.log("Blockade made");
         revalidateLayout();
       });
+
+      socket.on(serverInvitationKey, async () => {
+        console.log("Server invitation received");
+        revalidateLayout();
+      });
     });
 
     return () => {
@@ -44,11 +50,13 @@ export const useGlobalSocket = (keys: string[]) => {
         const invitationResponseKey = `navigation:${key}:invitationResponse`;
         const friendshipKey = `navigation:${key}:blockUser`;
         const deleteFriendshipKey = `navigation:${key}:deleteFriendship`;
+        const serverInvitationKey = `navigation:${key}:serverInvitationKey`;
 
         socket.off(addFriendKey);
         socket.off(invitationResponseKey);
         socket.off(friendshipKey);
         socket.off(deleteFriendshipKey);
+        socket.off(serverInvitationKey);
       });
     };
   }, [keys, socket]);

@@ -1,8 +1,8 @@
-import { NextApiRequest } from "next";
+import { NextApiRequest } from 'next';
 
-import { currentProfileForPages } from "@/lib/current-profile-for-pages";
-import { db } from "@/lib/db";
-import { NextApiResponseServerIo } from "@/types/types";
+import { currentProfileForPages } from '@/lib/current-profile-for-pages';
+import { db } from '@/lib/db';
+import { NextApiResponseServerIo } from '@/types/types';
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,14 +15,47 @@ export default async function handler(
         return res.status(401).json({ message: "Unauthorized" });
       }
 
-      const { serverId, receiverId } = req.body;
+      const { serverId, receiverEmail } = req.body;
 
       if (!serverId) {
         return res.status(400).json({ message: "Invalid serverId" });
       }
 
-      if (!receiverId) {
+      if (!receiverEmail) {
         return res.status(400).json({ message: "Invalid receiverId" });
+      }
+
+      const receiver = await db.profile.findFirst({
+        where: {
+          email: receiverEmail as string,
+        },
+      });
+
+      if (!receiver) {
+        return res.status(400).json({ message: "Invalid receiver" });
+      }
+
+      const server = await db.server.findFirst({
+        where: {
+          id: serverId as string,
+        },
+        include: {
+          members: true,
+        },
+      });
+
+      const isMember = server?.members.find(
+        (member) => member.id === profile.id
+      );
+
+      if (isMember) {
+        return res
+          .status(400)
+          .json({ message: "You are already a member of this server" });
+      }
+
+      if (!server) {
+        return res.status(400).json({ message: "Invalid server" });
       }
 
       const serverInvitation = await db.serverInvitation.findFirst({
@@ -31,9 +64,11 @@ export default async function handler(
           OR: [
             {
               receiverId: profile.id,
+              senderId: receiver.id,
             },
             {
               senderId: profile.id,
+              receiverId: receiver.id,
             },
           ],
         },
@@ -48,13 +83,13 @@ export default async function handler(
       await db.serverInvitation.createMany({
         data: {
           serverId: serverId as string,
-          receiverId: receiverId as string,
+          receiverId: receiver.id,
           senderId: profile.id,
         },
       });
 
       const serverInvitationKey = `navigation:${
-        serverId as string
+        receiver.id as string
       }:serverInvitationKey`;
 
       res?.socket?.server?.io?.emit(serverInvitationKey, "server invite");

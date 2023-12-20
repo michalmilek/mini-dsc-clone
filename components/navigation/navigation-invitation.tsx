@@ -1,14 +1,14 @@
 "use client";
 
-import { Check, XIcon } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Check, XIcon } from 'lucide-react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { useInviteResponse } from "@/app/services/user/invite-response";
-import { useToast } from "@/components/ui/use-toast";
-import { cn } from "@/lib/utils";
-import { $Enums } from "@prisma/client";
+import { useInviteResponse } from '@/app/services/user/invite-response';
+import { useToast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
+import { $Enums } from '@prisma/client';
 
 interface Invitation {
   id: string;
@@ -70,7 +70,6 @@ const NavigationInvitation = ({ invitation }: { invitation: Invitation }) => {
                       variant: "success",
                       title: "Invitation accepted",
                     });
-                    router.refresh();
                   },
                 }
               );
@@ -87,10 +86,9 @@ const NavigationInvitation = ({ invitation }: { invitation: Invitation }) => {
                 {
                   onSuccess: () => {
                     toast({
-                      variant: "success",
-                      title: "Invitation accepted",
+                      variant: "destructive",
+                      title: "Invitation declined",
                     });
-                    router.refresh();
                   },
                 }
               );

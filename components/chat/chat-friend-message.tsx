@@ -1,7 +1,7 @@
 "use client";
 
 import { format, formatDistanceToNow } from "date-fns";
-import { Edit, Trash } from "lucide-react";
+import { Check, Edit, Trash } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -153,6 +153,11 @@ const ChatFriendMessage = ({
                 title="Delete message">
                 <Trash className="h-4 w-4" />
               </button>
+              {message.seen && (
+                <span title="Seen">
+                  <Check className="h-4 w-4" />
+                </span>
+              )}
             </>
           )}
         </div>
