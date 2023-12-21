@@ -1,8 +1,8 @@
-import { Message } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
+import { Message } from "@prisma/client";
 
 export async function GET(req: Request) {
   try {
@@ -37,6 +37,7 @@ export async function GET(req: Request) {
               profile: true,
             },
           },
+          reactions: true,
         },
         orderBy: {
           createdAt: "desc",
@@ -50,6 +51,11 @@ export async function GET(req: Request) {
         },
         include: {
           member: {
+            include: {
+              profile: true,
+            },
+          },
+          reactions: {
             include: {
               profile: true,
             },

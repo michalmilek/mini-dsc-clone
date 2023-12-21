@@ -8,8 +8,8 @@ import { animateScroll as scroll } from "react-scroll";
 import { useChatSocket } from "@/app/hooks/use-chat-socket";
 import { useGetDirectMessages } from "@/app/services/chat/getDirectMessages";
 import { MessageWithMember } from "@/app/types/server";
+import ChatDirectMessage from "@/components/chat/chat-direct-message";
 import ChatLoader from "@/components/chat/chat-loader";
-import ChatMessage from "@/components/chat/chat-message";
 import { ChatWelcome } from "@/components/chat/chat-welcome";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Member } from "@prisma/client";
@@ -52,11 +52,18 @@ export const ChatDirectMessages = ({
 
   const addKey = useMemo(() => `chat:${chatId}:messages`, [chatId]);
   const updateKey = useMemo(() => `chat:${chatId}:messages:update`, [chatId]);
+  const reactionAddKey = useMemo(() => `chat:${chatId}:reaction:new`, [chatId]);
+  const reactionDeleteKey = useMemo(
+    () => `chat:${chatId}:reaction:delete`,
+    [chatId]
+  );
 
   useChatSocket({
     addKey,
     updateKey,
     channelId: chatId,
+    reactionAddKey,
+    reactionDeleteKey,
   });
 
   useEffect(() => {
@@ -111,7 +118,8 @@ export const ChatDirectMessages = ({
             className="flex flex-col-reverse space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
             {data.pages.map((page) => {
               return page.items.map((item: MessageWithMember) => (
-                <ChatMessage
+                <ChatDirectMessage
+                  type={type}
                   socketUrl={socketUrl}
                   chatId={chatId}
                   socketQuery={socketQuery}

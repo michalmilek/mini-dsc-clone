@@ -34,6 +34,7 @@ model Profile {
   channels Channel[]
 
   reactions Reaction[]
+  reactionToDirectMessages ReactionToDirectMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -248,6 +249,8 @@ model DirectMessage {
 
   deleted Boolean @default(false)
 
+  reactions ReactionToDirectMessage[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -267,5 +270,21 @@ model Reaction {
   updatedAt DateTime @updatedAt
 
   @@index([messageId])
+  @@index([profileId])
+}
+
+
+
+model ReactionToDirectMessage {
+  id        String   @id @default(uuid())
+  emoji     String   
+  directMessageId String
+  directMessage   DirectMessage  @relation(fields: [directMessageId], references: [id], onDelete: Cascade)
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([directMessageId])
   @@index([profileId])
 }

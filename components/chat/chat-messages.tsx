@@ -52,11 +52,18 @@ export const ChatMessages = ({
 
   const addKey = useMemo(() => `chat:${chatId}:messages`, [chatId]);
   const updateKey = useMemo(() => `chat:${chatId}:messages:update`, [chatId]);
+  const reactionAddKey = useMemo(() => `chat:${chatId}:reaction:new`, [chatId]);
+  const reactionDeleteKey = useMemo(
+    () => `chat:${chatId}:reaction:delete`,
+    [chatId]
+  );
 
   useChatSocket({
     addKey,
     updateKey,
     channelId: chatId,
+    reactionAddKey,
+    reactionDeleteKey,
   });
 
   useEffect(() => {
@@ -112,6 +119,7 @@ export const ChatMessages = ({
             {data.pages.map((page) => {
               return page.items.map((item: MessageWithMember) => (
                 <ChatMessage
+                  type={type}
                   socketUrl={socketUrl}
                   chatId={chatId}
                   socketQuery={socketQuery}

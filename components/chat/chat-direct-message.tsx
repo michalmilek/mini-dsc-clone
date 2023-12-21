@@ -11,7 +11,7 @@ import * as z from "zod";
 
 import { useModal } from "@/app/hooks/use-modal-store";
 import { useEditMessage } from "@/app/services/chat/editMessage";
-import { MessageWithMemberWithReactionsWithProfiles } from "@/app/types/server";
+import { DirectMessageWithMemberWithReactions } from "@/app/types/server";
 import ChatMessageExhibitReaction from "@/components/chat/chat-message-exhibit-reaction";
 import ChatMessageShowReactions from "@/components/chat/chat-message-show-reactions";
 import ImageModal from "@/components/modals/image-modal";
@@ -36,7 +36,7 @@ const formSchema = z.object({
   content: z.string().min(1),
 });
 
-const ChatMessage = ({
+const ChatDirectMessage = ({
   message,
   isSelf,
   socketUrl,
@@ -46,7 +46,7 @@ const ChatMessage = ({
   type,
 }: {
   type: "channel" | "conversation";
-  message: MessageWithMemberWithReactionsWithProfiles;
+  message: DirectMessageWithMemberWithReactions;
   isSelf: boolean;
   socketUrl: string;
   chatId: string;
@@ -196,7 +196,7 @@ const ChatMessage = ({
             serverId={params.serverId as string}
             apiUrl={apiUrl}
             type={type}
-            conversationId=""
+            conversationId={chatId}
           />
           {message.reactions && message.reactions.length > 0 && (
             <ChatMessageShowReactions reactions={message.reactions} />
@@ -237,4 +237,4 @@ const ChatMessage = ({
   );
 };
 
-export default ChatMessage;
+export default ChatDirectMessage;
