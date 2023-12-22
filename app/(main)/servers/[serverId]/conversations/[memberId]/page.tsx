@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 
 import { ChatDirectMediaRoom } from "@/components/chat/chat-direct-media-room";
 import { ChatDirectMessages } from "@/components/chat/chat-direct-messages";
+import ServerHeader from "@/components/chat/chat-header";
 import ChatInput from "@/components/chat/chat-input";
-import ServerHeader from "@/components/server/server-header";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { redirectToSignIn } from "@clerk/nextjs";

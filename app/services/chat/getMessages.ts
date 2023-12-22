@@ -1,17 +1,21 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
+
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 interface GetMessageParams {
   cursor?: string;
   channelId?: string;
+  messageId?: string;
 }
 
 export function useGetMessages({
   chatId,
   initialCursor = 1,
+  messageId,
 }: {
   chatId: string;
   initialCursor?: number;
+  messageId?: string;
 }) {
   const getMessages = async ({
     pageParam,
@@ -20,7 +24,11 @@ export function useGetMessages({
   }) => {
     const response = await axios
       .get(`/api/messages?channelId=${chatId}`, {
-        params: { ...pageParam, cursor: pageParam?.cursor },
+        params: {
+          ...pageParam,
+          cursor: pageParam?.cursor,
+          messageId: pageParam?.messageId,
+        },
       })
       .then((res) => res.data);
 
@@ -36,11 +44,13 @@ export function useGetMessages({
       return {
         channelId: chatId,
         cursor: lastPage.nextCursor,
+        messageId: "",
       };
     },
     initialPageParam: {
       cursor: "",
       channelId: chatId,
+      messageId: messageId || "",
     },
   });
 }

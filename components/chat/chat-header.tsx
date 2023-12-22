@@ -1,11 +1,11 @@
 "use client";
 
 import { Bell, Hash, Phone, Search, Video } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useModal } from "@/app/hooks/use-modal-store";
 import { MemberChat } from "@/app/types/server";
-import { useSocket } from "@/components/providers/socket-provider";
 import { SocketIndicator } from "@/components/socket-indicator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -17,11 +17,11 @@ interface Props {
   member?: MemberChat;
 }
 
-const ServerHeader = ({ channel, type, member }: Props) => {
+const ChatHeader = ({ channel, type, member }: Props) => {
   const { onOpen } = useModal();
   const [isMounted, setIsMounted] = useState(false);
-
-  const { socket } = useSocket();
+  const params = useParams();
+  console.log("🚀 ~ params:", params);
 
   useEffect(() => {
     setIsMounted(true);
@@ -92,7 +92,13 @@ const ServerHeader = ({ channel, type, member }: Props) => {
               </Button>
             </>
           )}
-          <Button type="button">
+          <Button
+            onClick={() =>
+              onOpen("findMessage", {
+                chatId: params?.channelId as string,
+              })
+            }
+            type="button">
             <Search />
           </Button>
           <Button type="button">
@@ -105,4 +111,4 @@ const ServerHeader = ({ channel, type, member }: Props) => {
   );
 };
 
-export default ServerHeader;
+export default ChatHeader;

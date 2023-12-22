@@ -2,7 +2,6 @@
 
 import { format, formatDistanceToNow } from "date-fns";
 import { Edit, ShieldAlert, ShieldCheck, Trash, User } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
@@ -14,6 +13,7 @@ import { useEditMessage } from "@/app/services/chat/editMessage";
 import { DirectMessageWithMemberWithReactions } from "@/app/types/server";
 import ChatMessageExhibitReaction from "@/components/chat/chat-message-exhibit-reaction";
 import ChatMessageShowReactions from "@/components/chat/chat-message-show-reactions";
+import ChatTalkerTooltip from "@/components/chat/chat-talker-tooltip";
 import ImageModal from "@/components/modals/image-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -120,16 +120,7 @@ const ChatDirectMessage = ({
             ? `/server/${params.serverId}/conversations/${message.memberId}`
             : "#"
         }>
-        <div
-          className="relative 
-        w-12 h-12">
-          <Image
-            layout="fill"
-            src={message.member.profile.imageUrl}
-            alt="Profile"
-            className="rounded-full"
-          />
-        </div>
+        <ChatTalkerTooltip profile={message.member.profile} />
       </Link>
       <div className="flex flex-col justify-between items-start w-full">
         <div
