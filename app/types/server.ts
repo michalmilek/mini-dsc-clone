@@ -1,7 +1,15 @@
 import {
-  Channel, DirectMessage, DirectMessageBetweenFriends, Member, MemberRole, Message, Profile,
-  Reaction, ReactionToDirectMessage
-} from '@prisma/client';
+  Channel,
+  DirectMessage,
+  FriendshipMessage,
+  Member,
+  MemberRole,
+  Message,
+  Profile,
+  Reaction,
+  ReactionToDirectMessage,
+  ReactionToFriendshipMessage,
+} from "@prisma/client";
 
 export interface NewServerRequest {
   name: string;
@@ -81,20 +89,18 @@ export type ReactionToDirectMessageWithProfile = ReactionToDirectMessage & {
   profile: Profile;
 };
 
-export type MessageWithFriend = DirectMessageBetweenFriends & {
+export type MessageWithFriend = FriendshipMessage & {
   friend: Profile;
+  reactions: ReactionToFriendshipMessageWithProfile[];
 };
+
+export type ReactionToFriendshipMessageWithProfile =
+  ReactionToFriendshipMessage & {
+    profile: Profile;
+  };
 
 export type MemberWithProfile = Member & {
   profile: Profile;
 };
 
-export interface FriendshipFriend {
-  id: string;
-  userId: string;
-  name: string;
-  imageUrl: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type FriendshipFriend = Profile;

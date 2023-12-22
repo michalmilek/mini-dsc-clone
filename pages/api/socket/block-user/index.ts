@@ -66,7 +66,7 @@ export default async function handler(
         });
       }
 
-      const friendship = await db.conversationBetweenFriends.findFirst({
+      const friendship = await db.friendship.findFirst({
         where: {
           OR: [
             {
@@ -82,7 +82,7 @@ export default async function handler(
       });
 
       if (friendship) {
-        await db.conversationBetweenFriends.delete({
+        await db.friendship.delete({
           where: {
             id: friendship.id,
           },

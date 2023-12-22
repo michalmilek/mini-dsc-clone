@@ -56,7 +56,7 @@ const NavigationSidebar = async () => {
     },
   });
 
-  const friends = await db.conversationBetweenFriends.findMany({
+  const friends = await db.friendship.findMany({
     where: {
       OR: [
         {

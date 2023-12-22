@@ -10,7 +10,7 @@ export const markAsRead = async (friendshipId: string) => {
     throw new Error("Unauthorized");
   }
 
-  const friendship = await db.conversationBetweenFriends.findFirst({
+  const friendship = await db.friendship.findFirst({
     where: {
       id: friendshipId,
       OR: [
@@ -33,7 +33,7 @@ export const markAsRead = async (friendshipId: string) => {
       ? friendship.friendTwoId
       : friendship.friendOneId;
 
-  await db.directMessageBetweenFriends.updateMany({
+  await db.friendshipMessage.updateMany({
     where: {
       conversationId: friendship.id,
       friendId: secondUserId,

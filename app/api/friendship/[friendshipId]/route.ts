@@ -17,7 +17,7 @@ export async function DELETE(
       return new NextResponse("Invalid friendshipId", { status: 400 });
     }
 
-    const friendship = await db.conversationBetweenFriends.findFirst({
+    const friendship = await db.friendship.findFirst({
       where: {
         id: params.friendshipId,
         OR: [
@@ -50,7 +50,7 @@ export async function DELETE(
       },
     });
 
-    const deleteFriendship = await db.conversationBetweenFriends.delete({
+    const deleteFriendship = await db.friendship.delete({
       where: {
         id: friendship.id,
       },

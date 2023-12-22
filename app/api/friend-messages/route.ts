@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
-import { DirectMessageBetweenFriends } from "@prisma/client";
+import { FriendshipMessage } from "@prisma/client";
 
 export async function GET(req: Request) {
   try {
@@ -19,10 +19,10 @@ export async function GET(req: Request) {
 
     const messageAmount = 10;
 
-    let messages: DirectMessageBetweenFriends[] = [];
+    let messages: FriendshipMessage[] = [];
 
     if (cursor) {
-      messages = await db.directMessageBetweenFriends.findMany({
+      messages = await db.friendshipMessage.findMany({
         take: messageAmount,
         skip: 1,
         cursor: {
@@ -33,19 +33,29 @@ export async function GET(req: Request) {
         },
         include: {
           friend: true,
+          reactions: {
+            include: {
+              profile: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
         },
       });
     } else {
-      messages = await db.directMessageBetweenFriends.findMany({
+      messages = await db.friendshipMessage.findMany({
         take: messageAmount,
         where: {
           conversationId: friendshipId as string,
         },
         include: {
           friend: true,
+          reactions: {
+            include: {
+              profile: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",

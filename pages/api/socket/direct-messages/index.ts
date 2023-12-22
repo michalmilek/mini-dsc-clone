@@ -14,7 +14,7 @@ export default async function handler(
 
   try {
     const profile = await currentProfileForPages(req);
-    console.log("🚀 ~ profile:", profile);
+
     const { content, fileUrl } = req.body;
     const { conversationId } = req.query;
 
@@ -33,6 +33,25 @@ export default async function handler(
     const member = await db.member.findFirst({
       where: {
         profileId: profile.id,
+        OR: [
+          {
+            conversationsInitiated: {
+              some: {
+                id: conversationId as string,
+              },
+            },
+          },
+          {
+            conversationsReceived: {
+              some: {
+                id: conversationId as string,
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        profile: true,
       },
     });
 

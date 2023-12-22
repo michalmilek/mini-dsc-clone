@@ -44,7 +44,7 @@ export default async function handler(
         },
       });
 
-      const newFriend = await db.conversationBetweenFriends.create({
+      const newFriend = await db.friendship.create({
         data: {
           friendOneId: invitation.senderId,
           friendTwoId: invitation.receiverId,

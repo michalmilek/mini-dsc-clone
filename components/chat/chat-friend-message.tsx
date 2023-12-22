@@ -12,6 +12,8 @@ import * as z from "zod";
 import { useModal } from "@/app/hooks/use-modal-store";
 import { useEditMessage } from "@/app/services/chat/editMessage";
 import { MessageWithFriend } from "@/app/types/server";
+import ChatMessageExhibitReaction from "@/components/chat/chat-message-exhibit-reaction";
+import ChatMessageShowReactions from "@/components/chat/chat-message-show-reactions";
 import ImageModal from "@/components/modals/image-modal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,14 +60,7 @@ const ChatFriendMessage = ({
   const params = useParams();
   const { mutate } = useEditMessage();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm<FormData>({
+  const { register, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: message.content,
@@ -93,6 +88,10 @@ const ChatFriendMessage = ({
   if (!params) {
     return null;
   }
+
+  const myReaction = message.reactions?.find(
+    (reaction) => reaction.profile.id === member.id
+  );
 
   return (
     <div
@@ -153,12 +152,29 @@ const ChatFriendMessage = ({
                 title="Delete message">
                 <Trash className="h-4 w-4" />
               </button>
+
               {message.seen && (
-                <span title="Seen">
-                  <Check className="h-4 w-4" />
-                </span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Check className="h-4 w-4" />
+                    </TooltipTrigger>
+                    <TooltipContent>Seen</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </>
+          )}
+          <ChatMessageExhibitReaction
+            myReaction={myReaction}
+            messageId={message.id}
+            serverId={params.serverId as string}
+            apiUrl={"/api/socket/friendship/"}
+            type={"conversation"}
+            conversationId={chatId}
+          />
+          {message.reactions && message.reactions.length > 0 && (
+            <ChatMessageShowReactions reactions={message.reactions} />
           )}
         </div>
         {!message.deleted ? (

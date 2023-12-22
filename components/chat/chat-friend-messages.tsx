@@ -57,11 +57,18 @@ export const ChatFriendMessages = ({
 
   const addKey = useMemo(() => `chat:${chatId}:messages`, [chatId]);
   const updateKey = useMemo(() => `chat:${chatId}:messages:update`, [chatId]);
+  const reactionAddKey = useMemo(() => `chat:${chatId}:reaction:new`, [chatId]);
+  const reactionDeleteKey = useMemo(
+    () => `chat:${chatId}:reaction:delete`,
+    [chatId]
+  );
 
   useChatSocket({
     addKey,
     updateKey,
     channelId: chatId,
+    reactionAddKey,
+    reactionDeleteKey,
   });
 
   useEffect(() => {

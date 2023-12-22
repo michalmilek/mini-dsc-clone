@@ -1,12 +1,12 @@
-import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-import { ChatDirectMessages } from "@/components/chat/chart-direct-messages";
 import { ChatDirectMediaRoom } from "@/components/chat/chat-direct-media-room";
+import { ChatDirectMessages } from "@/components/chat/chat-direct-messages";
 import ChatInput from "@/components/chat/chat-input";
 import ServerHeader from "@/components/server/server-header";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
+import { redirectToSignIn } from "@clerk/nextjs";
 
 const MemberIdPage = async ({
   params,

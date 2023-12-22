@@ -29,7 +29,7 @@ export default async function handler(
       return res.status(400).json({ error: "Content missing" });
     }
 
-    const conversation = await db.conversationBetweenFriends.findFirst({
+    const conversation = await db.friendship.findFirst({
       where: {
         id: friendshipId as string,
         OR: [
@@ -51,7 +51,7 @@ export default async function handler(
       return res.status(404).json({ error: "Friendship not found" });
     }
 
-    const message = await db.directMessageBetweenFriends.create({
+    const message = await db.friendshipMessage.create({
       data: {
         content: content as string,
         fileUrl,

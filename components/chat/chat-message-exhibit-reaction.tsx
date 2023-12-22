@@ -6,7 +6,11 @@ import { useState } from "react";
 
 import { useDeleteReaction } from "@/app/services/chat/deleteReaction";
 import useReactionMessage from "@/app/services/chat/reactionMessage";
-import { ReactionWithProfile } from "@/app/types/server";
+import {
+  ReactionToDirectMessageWithProfile,
+  ReactionToFriendshipMessageWithProfile,
+  ReactionWithProfile,
+} from "@/app/types/server";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -25,7 +29,11 @@ import Picker from "@emoji-mart/react";
 interface Props {
   messageId: string;
   serverId: string;
-  myReaction: ReactionWithProfile | undefined;
+  myReaction:
+    | ReactionWithProfile
+    | ReactionToDirectMessageWithProfile
+    | ReactionToFriendshipMessageWithProfile
+    | undefined;
   apiUrl: string;
   type: "channel" | "conversation";
   conversationId?: string;

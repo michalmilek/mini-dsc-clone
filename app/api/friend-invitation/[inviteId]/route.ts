@@ -42,7 +42,7 @@ export async function POST(
       },
     });
 
-    const newFriend = await db.conversationBetweenFriends.create({
+    const newFriend = await db.friendship.create({
       data: {
         friendOneId: invitation.senderId,
         friendTwoId: invitation.receiverId,

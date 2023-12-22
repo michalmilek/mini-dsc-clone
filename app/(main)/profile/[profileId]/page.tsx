@@ -12,7 +12,7 @@ const Page = async ({ params }: { params: { profileId: string } }) => {
     return redirect("/");
   }
 
-  const friendship = await db.conversationBetweenFriends.findFirst({
+  const friendship = await db.friendship.findFirst({
     where: {
       OR: [
         {

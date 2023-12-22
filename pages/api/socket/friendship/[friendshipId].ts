@@ -21,7 +21,7 @@ export default async function handler(
         return res.status(400).json({ message: "Invalid friendshipId" });
       }
 
-      const friendship = await db.conversationBetweenFriends.findFirst({
+      const friendship = await db.friendship.findFirst({
         where: {
           id: friendshipId as string,
           OR: [
@@ -54,7 +54,7 @@ export default async function handler(
         },
       });
 
-      const deleteFriendship = await db.conversationBetweenFriends.delete({
+      const deleteFriendship = await db.friendship.delete({
         where: {
           id: friendship.id,
         },

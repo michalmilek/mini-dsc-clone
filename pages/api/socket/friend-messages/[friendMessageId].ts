@@ -29,7 +29,7 @@ export default async function handler(
       return res.status(400).json({ error: "Message ID missing" });
     }
 
-    const friendship = await db.conversationBetweenFriends.findFirst({
+    const friendship = await db.friendship.findFirst({
       where: {
         id: friendshipId as string,
         OR: [
@@ -51,7 +51,7 @@ export default async function handler(
       return res.status(404).json({ error: "Friendship not found" });
     }
 
-    let message = await db.directMessageBetweenFriends.findFirst({
+    let message = await db.friendshipMessage.findFirst({
       where: {
         id: messageId as string,
       },
@@ -69,7 +69,7 @@ export default async function handler(
     }
 
     if (req.method === "PATCH") {
-      message = await db.directMessageBetweenFriends.update({
+      message = await db.friendshipMessage.update({
         where: {
           id: messageId as string,
         },
@@ -84,7 +84,7 @@ export default async function handler(
     }
 
     if (req.method === "DELETE") {
-      message = await db.directMessageBetweenFriends.update({
+      message = await db.friendshipMessage.update({
         where: {
           id: messageId as string,
         },

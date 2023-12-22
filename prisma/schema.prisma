@@ -24,10 +24,10 @@ model Profile {
   serverSenderInvitations   ServerInvitation[] @relation("ServerInvitationSender")
   serverReceiverInvitations ServerInvitation[] @relation("ServerInvitationReceiver")
 
-  friendOne ConversationBetweenFriends[] @relation("FriendOne")
-  friendTwo ConversationBetweenFriends[] @relation("FriendTwo")
+  friendOne Friendship[] @relation("FriendOne")
+  friendTwo Friendship[] @relation("FriendTwo")
 
-  directMessagesBetweenFriends DirectMessageBetweenFriends[]
+  directMessagesBetweenFriends FriendshipMessage[]
 
   servers  Server[]
   members  Member[]
@@ -35,6 +35,7 @@ model Profile {
 
   reactions Reaction[]
   reactionToDirectMessages ReactionToDirectMessage[]
+  reactionToFriendshipMessages ReactionToFriendshipMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -64,7 +65,7 @@ model FriendInvitation {
   @@index([receiverId])
 }
 
-model ConversationBetweenFriends {
+model Friendship {
   id String @id @default(uuid())
 
   friendOneId String
@@ -73,7 +74,7 @@ model ConversationBetweenFriends {
   friendTwoId String
   friendTwo   Profile @relation("FriendTwo", fields: [friendTwoId], references: [id], onDelete: Cascade)
 
-  directMessagesBetweenFriends DirectMessageBetweenFriends[]
+  directMessagesBetweenFriends FriendshipMessage[]
   createdAt                    DateTime                      @default(now())
   updatedAt                    DateTime                      @updatedAt
 
@@ -82,7 +83,7 @@ model ConversationBetweenFriends {
   @@index([friendTwoId])
 }
 
-model DirectMessageBetweenFriends {
+model FriendshipMessage {
   id      String  @id @default(uuid())
   content String  @db.Text
   fileUrl String? @db.Text
@@ -92,9 +93,11 @@ model DirectMessageBetweenFriends {
   friend   Profile @relation(fields: [friendId], references: [id], onDelete: Cascade)
 
   conversationId String
-  conversation   ConversationBetweenFriends @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversation   Friendship @relation(fields: [conversationId], references: [id], onDelete: Cascade)
 
   deleted Boolean @default(false)
+
+  reactions ReactionToFriendshipMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -286,5 +289,21 @@ model ReactionToDirectMessage {
   updatedAt DateTime @updatedAt
 
   @@index([directMessageId])
+  @@index([profileId])
+}
+
+
+
+model ReactionToFriendshipMessage {
+  id        String   @id @default(uuid())
+  emoji     String   
+  friendshipMessageId String
+  friendshipMessage   FriendshipMessage  @relation(fields: [friendshipMessageId], references: [id], onDelete: Cascade)
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([friendshipMessageId])
   @@index([profileId])
 }

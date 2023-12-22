@@ -1,15 +1,15 @@
 "use client";
 
-import { ReactionWithProfile } from "@/app/types/server";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  ReactionToDirectMessageWithProfile, ReactionToFriendshipMessageWithProfile, ReactionWithProfile
+} from '@/app/types/server';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Props {
-  reactions: ReactionWithProfile[];
+  reactions:
+    | ReactionWithProfile[]
+    | ReactionToDirectMessageWithProfile[]
+    | ReactionToFriendshipMessageWithProfile[]
 }
 
 const ChatMessageShowReactions = ({ reactions }: Props) => {
