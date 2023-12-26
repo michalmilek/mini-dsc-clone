@@ -38,50 +38,55 @@ const ChannelIdPage = async ({
     return redirect("/");
   }
 
+  const title = `${channel.name} - ${channel.type.toLowerCase()} channel`;
+
   return (
-    <div className="h-screen overflow-y-hidden justify-between flex flex-col relative">
-      <ChatHeader
-        type="channel"
-        channel={channel}
-      />
-      <ChatMessages
-        apiUrl="/api/messages"
-        member={member}
-        type="channel"
-        name={channel.name}
-        socketUrl="/api/socket/messages"
-        socketQuery={{
-          channelId: channelId,
-          serverId: channel.serverId,
-        }}
-        paramKey="channelId"
-        paramValue={channel.id}
-        chatId={channel.id}
-      />
-      {channel.type === "VIDEO" && (
-        <ChatMediaRoom
-          chatId={channelId}
-          audio={true}
-          video={true}
+    <>
+      <title>{title}</title>
+      <div className="h-screen overflow-y-hidden justify-between flex flex-col relative">
+        <ChatHeader
+          type="channel"
+          channel={channel}
         />
-      )}
-      {channel.type === "AUDIO" && (
-        <ChatMediaRoom
-          chatId={channelId}
-          audio={true}
-          video={false}
+        <ChatMessages
+          apiUrl="/api/messages"
+          member={member}
+          type="channel"
+          name={channel.name}
+          socketUrl="/api/socket/messages"
+          socketQuery={{
+            channelId: channelId,
+            serverId: channel.serverId,
+          }}
+          paramKey="channelId"
+          paramValue={channel.id}
+          chatId={channel.id}
         />
-      )}
-      <ChatInput
-        name={channel.name}
-        type="channel"
-        apiUrl="/api/socket/messages"
-        query={{
-          channelId: channel.id,
-          serverId: channel.serverId,
-        }}
-      />
-    </div>
+        {channel.type === "VIDEO" && (
+          <ChatMediaRoom
+            chatId={channelId}
+            audio={true}
+            video={true}
+          />
+        )}
+        {channel.type === "AUDIO" && (
+          <ChatMediaRoom
+            chatId={channelId}
+            audio={true}
+            video={false}
+          />
+        )}
+        <ChatInput
+          name={channel.name}
+          type="channel"
+          apiUrl="/api/socket/messages"
+          query={{
+            channelId: channel.id,
+            serverId: channel.serverId,
+          }}
+        />
+      </div>
+    </>
   );
 };
 

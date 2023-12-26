@@ -63,9 +63,16 @@ export default async function handler(
       },
     });
 
+    const otherUser =
+      conversation.friendOneId === profile.id
+        ? conversation.friendTwo
+        : conversation.friendOne;
+
     const channelKey = `chat:${conversation.id}:messages`;
+    const newMessage = `user:${otherUser.id}:notification`;
 
     res?.socket?.server?.io?.emit(channelKey, "new msg");
+    res?.socket?.server?.io?.emit(newMessage, "new notification");
 
     return res.status(200).json(message);
   } catch (error) {

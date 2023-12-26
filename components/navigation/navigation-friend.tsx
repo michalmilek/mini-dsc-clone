@@ -13,6 +13,12 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { Friendship } from "@/types/friendship";
@@ -51,6 +57,23 @@ const NavigationFriend = ({ friendship }: { friendship: Friendship }) => {
         <ContextMenu>
           <ContextMenuTrigger>
             <div className={cn(`relative w-12 h-12`)}>
+              {friendship.directMessagesBetweenFriends.length > 0 && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <span className="absolute z-10 top-0 -right-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full h-5 w-5 flex items-center justify-center">
+                        {friendship.directMessagesBetweenFriends.length}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {friendship.directMessagesBetweenFriends.length} unread
+                        message/messages from {member.name}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               <Image
                 layout="fill"
                 src={member.imageUrl}

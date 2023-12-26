@@ -2,9 +2,11 @@ import { useEffect } from 'react';
 
 import { revalidateLayout } from '@/app/actions/revalidateLayout';
 import { useSocket } from '@/components/providers/socket-provider';
+import { useQueryClient } from "@tanstack/react-query";
 
-export const useGlobalSocket = (keys: string[]) => {
+export const useGlobalSocket = (keys: string[], myId: string) => {
   const { socket } = useSocket();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!socket) {
@@ -17,10 +19,24 @@ export const useGlobalSocket = (keys: string[]) => {
       const friendshipKey = `navigation:${key}:blockUser`;
       const deleteFriendshipKey = `navigation:${key}:deleteFriendship`;
       const serverInvitationKey = `navigation:${key}:serverInvitationKey`;
+      const newMessage = `user:${key}:notification`;
 
       socket.on(addFriendKey, async () => {
         console.log("add friend");
         revalidateLayout();
+      });
+
+      socket.on(newMessage, async () => {
+        console.log("new notification");
+        if (newMessage.includes(myId)) {
+          const audio = new Audio("/gadu-gadu.mp3");
+          audio.play();
+        }
+
+        revalidateLayout();
+        queryClient.invalidateQueries({
+          queryKey: ["messages"],
+        });
       });
 
       socket.on(invitationResponseKey, async () => {
@@ -51,12 +67,14 @@ export const useGlobalSocket = (keys: string[]) => {
         const friendshipKey = `navigation:${key}:blockUser`;
         const deleteFriendshipKey = `navigation:${key}:deleteFriendship`;
         const serverInvitationKey = `navigation:${key}:serverInvitationKey`;
+        const newMessage = `user:${key}:notification`;
 
         socket.off(addFriendKey);
         socket.off(invitationResponseKey);
         socket.off(friendshipKey);
         socket.off(deleteFriendshipKey);
         socket.off(serverInvitationKey);
+        socket.off(newMessage);
       });
     };
   }, [keys, socket]);

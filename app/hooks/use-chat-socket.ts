@@ -52,5 +52,13 @@ export const useChatSocket = ({
       socket.off(reactionAddKey);
       socket.off(reactionDeleteKey);
     };
-  }, [queryClient, addKey, updateKey, socket, channelId, reactionAddKey]);
+  }, [
+    queryClient,
+    addKey,
+    updateKey,
+    socket,
+    channelId,
+    reactionAddKey,
+    reactionDeleteKey,
+  ]);
 };

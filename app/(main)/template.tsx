@@ -2,7 +2,7 @@ import React from "react";
 
 import NavigationSidebar from "@/components/navigation/navigation-sidebar";
 
-const Template = ({ children }: { children: React.ReactNode }) => {
+const Template = async ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <NavigationSidebar />

@@ -1,21 +1,20 @@
 "use client";
 
-import { Bell, Phone, Search, Video } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Bell, Phone, Search, Video } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { useModal } from "@/app/hooks/use-modal-store";
-import { FriendshipFriend } from "@/app/types/server";
-import FriendshipMore from "@/components/friendship/friendship-more";
-import { useSocket } from "@/components/providers/socket-provider";
-import { SocketIndicator } from "@/components/socket-indicator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Friendship } from "@/types/friendship";
+import { useModal } from '@/app/hooks/use-modal-store';
+import { FriendshipFriend } from '@/app/types/server';
+import FriendshipMore from '@/components/friendship/friendship-more';
+import { useSocket } from '@/components/providers/socket-provider';
+import { SocketIndicator } from '@/components/socket-indicator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   member: FriendshipFriend;
-  friendship: Friendship;
+  friendship: FriendshipWithFriends;
 }
 
 const ChatFriendshipHeader = ({ member, friendship }: Props) => {

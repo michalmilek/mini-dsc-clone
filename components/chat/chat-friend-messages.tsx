@@ -6,8 +6,10 @@ import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 import { animateScroll as scroll } from "react-scroll";
 
+import { revalidateLayout } from "@/app/actions/revalidateLayout";
 import useAsync from "@/app/hooks/use-async";
 import { useChatSocket } from "@/app/hooks/use-chat-socket";
+import { useSendMessageHook } from "@/app/hooks/use-send-message";
 import { useGetFriendMessages } from "@/app/services/chat/getFriendMessages";
 import { markAsRead } from "@/app/services/chat/markAsRead";
 import { MessageWithFriend } from "@/app/types/server";
@@ -16,6 +18,7 @@ import ChatLoader from "@/components/chat/chat-loader";
 import { ChatWelcome } from "@/components/chat/chat-welcome";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Profile } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   name: string;
@@ -50,14 +53,22 @@ export const ChatFriendMessages = ({
   const { ref, inView } = useInView({
     threshold: 0,
   });
+  const queryClient = useQueryClient();
+  const { isSent, setSentFalse } = useSendMessageHook();
   const searchParams = useSearchParams();
   const messageId = searchParams?.get("messageId");
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useGetFriendMessages({
-      friendshipId: chatId,
-      messageId: messageId ? messageId : "",
-    });
-  const { execute } = useAsync(markAsRead);
+  const {
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isSuccess,
+    isFetchedAfterMount,
+  } = useGetFriendMessages({
+    friendshipId: chatId,
+    messageId: messageId ? messageId : "",
+  });
+  const { execute, status } = useAsync(markAsRead);
 
   const addKey = useMemo(() => `chat:${chatId}:messages`, [chatId]);
   const updateKey = useMemo(() => `chat:${chatId}:messages:update`, [chatId]);
@@ -75,9 +86,58 @@ export const ChatFriendMessages = ({
     reactionDeleteKey,
   });
 
+  const hasUnseenMessage = useMemo(
+    () =>
+      data &&
+      data.pages.some((page) =>
+        page.items.some(
+          (item: MessageWithFriend) =>
+            item.seen === false && myId === item.friendId
+        )
+      ),
+    [data, myId]
+  );
+
   useEffect(() => {
-    execute(chatId);
-  }, [execute, chatId]);
+    if (isFetchedAfterMount) {
+      setTimeout(() => {
+        const element = document.getElementById("emptyDiv");
+
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 2000);
+    }
+  }, [isFetchedAfterMount]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      if (hasUnseenMessage) {
+        execute(chatId);
+      }
+    }
+  }, [execute, chatId, isSuccess, hasUnseenMessage]);
+
+  useEffect(() => {
+    if (status === "success") {
+      revalidateLayout();
+      queryClient.invalidateQueries({ queryKey: ["messages", chatId] });
+    }
+  }, [status, chatId, queryClient]);
+
+  useEffect(() => {
+    const logOnRefetch = () => {
+      execute(chatId);
+    };
+
+    window.addEventListener("focus", logOnRefetch);
+    window.addEventListener("scroll", logOnRefetch);
+
+    return () => {
+      window.removeEventListener("focus", logOnRefetch);
+      window.removeEventListener("scroll", logOnRefetch);
+    };
+  }, [chatId, execute]);
 
   useEffect(() => {
     if (!data) {
@@ -95,9 +155,16 @@ export const ChatFriendMessages = ({
     fetchNextPage();
   }, [fetchNextPage, hasNextPage, inView]);
 
-  const scrollToBottom = () => {
-    scroll.scrollToBottom();
-  };
+  useEffect(() => {
+    if (isSent) {
+      const element = document.getElementById("emptyDiv");
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+      setSentFalse();
+    }
+  }, [isSent, setSentFalse]);
 
   if (!data) {
     return null;
@@ -145,6 +212,7 @@ export const ChatFriendMessages = ({
           </div>
         )}
       </div>
+      <div id="emptyDiv" />
     </ScrollArea>
   );
 };

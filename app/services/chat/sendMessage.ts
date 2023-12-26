@@ -1,5 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+
+import { useSendMessageHook } from "@/app/hooks/use-send-message";
+import { useMutation } from "@tanstack/react-query";
 
 interface MessageInterface {
   body: {
@@ -9,6 +11,7 @@ interface MessageInterface {
 }
 
 export function useSendMessage() {
+  const { setSentTrue } = useSendMessageHook();
   const sendMessage = async ({
     url,
     arg,
@@ -21,5 +24,11 @@ export function useSendMessage() {
       .then((res) => res.data);
   };
 
-  return useMutation({ mutationFn: sendMessage });
+  return useMutation({
+    mutationFn: sendMessage,
+    mutationKey: ["sendMessage"],
+    onSuccess: () => {
+      setSentTrue();
+    },
+  });
 }

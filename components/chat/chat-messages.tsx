@@ -7,13 +7,14 @@ import { useInView } from 'react-intersection-observer';
 import { animateScroll as scroll } from 'react-scroll';
 
 import { useChatSocket } from '@/app/hooks/use-chat-socket';
-import { useGetMessages } from '@/app/services/chat/getMessages';
-import { MessageWithMember } from '@/app/types/server';
-import ChatLoader from '@/components/chat/chat-loader';
-import ChatMessage from '@/components/chat/chat-message';
-import { ChatWelcome } from '@/components/chat/chat-welcome';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Member } from '@prisma/client';
+import { useSendMessageHook } from "@/app/hooks/use-send-message";
+import { useGetMessages } from "@/app/services/chat/getMessages";
+import { MessageWithMember } from "@/app/types/server";
+import ChatLoader from "@/components/chat/chat-loader";
+import ChatMessage from "@/components/chat/chat-message";
+import { ChatWelcome } from "@/components/chat/chat-welcome";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Member } from "@prisma/client";
 
 interface Props {
   name: string;
@@ -47,14 +48,21 @@ export const ChatMessages = ({
     threshold: 0,
   });
 
+  const { setSentFalse, isSent } = useSendMessageHook();
+
   const searchParams = useSearchParams();
   const messageId = searchParams?.get("messageId");
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useGetMessages({
-      chatId,
-      messageId: messageId ? messageId : "",
-    });
+  const {
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isFetchedAfterMount,
+  } = useGetMessages({
+    chatId,
+    messageId: messageId ? messageId : "",
+  });
 
   const addKey = useMemo(() => `chat:${chatId}:messages`, [chatId]);
   const updateKey = useMemo(() => `chat:${chatId}:messages:update`, [chatId]);
@@ -92,6 +100,29 @@ export const ChatMessages = ({
     scroll.scrollToBottom();
   };
 
+  useEffect(() => {
+    if (isFetchedAfterMount) {
+      setTimeout(() => {
+        const element = document.getElementById("emptyDiv");
+
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 2000);
+    }
+  }, [isFetchedAfterMount]);
+
+  useEffect(() => {
+    if (isSent) {
+      const element = document.getElementById("emptyDiv");
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+      setSentFalse();
+    }
+  }, [isSent, setSentFalse]);
+
   if (!data) {
     return null;
   }
@@ -119,26 +150,29 @@ export const ChatMessages = ({
           </button>
         )}
         {data && (
-          <div
-            id="messages"
-            className="flex flex-col-reverse space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
-            {data.pages.map((page) => {
-              return page.items.map((item: MessageWithMember) => (
-                <ChatMessage
-                  type={type}
-                  socketUrl={socketUrl}
-                  chatId={chatId}
-                  socketQuery={socketQuery}
-                  key={item.id + "messages"}
-                  message={item}
-                  member={member}
-                  isSelf={item.memberId === member.id}
-                />
-              ));
-            })}
-          </div>
+          <>
+            <div
+              id="messages"
+              className="flex flex-col-reverse space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+              {data.pages.map((page) => {
+                return page.items.map((item: MessageWithMember) => (
+                  <ChatMessage
+                    type={type}
+                    socketUrl={socketUrl}
+                    chatId={chatId}
+                    socketQuery={socketQuery}
+                    key={item.id + "messages"}
+                    message={item}
+                    member={member}
+                    isSelf={item.memberId === member.id}
+                  />
+                ));
+              })}
+            </div>
+          </>
         )}
       </div>
+      <div id="emptyDiv" />
     </ScrollArea>
   );
 };

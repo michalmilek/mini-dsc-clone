@@ -196,7 +196,8 @@ const ChatFriendMessage = ({
               <span
                 className={cn(
                   `px-4 py-2 text-sm`,
-                  isLookedFor && "bg-blue-700 dark:bg-blue-300"
+                  isLookedFor && "bg-blue-700 dark:bg-blue-300",
+                  !message.seen && !isSelf && "font-bold text-md"
                 )}>
                 {message.content}
               </span>

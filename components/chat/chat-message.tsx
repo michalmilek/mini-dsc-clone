@@ -131,7 +131,10 @@ const ChatMessage = ({
           />
         </div>
       </Link>
-      <div className="flex flex-col justify-between items-start w-full">
+      <div
+        className={`flex flex-col justify-between ${
+          isSelf ? "items-start" : "items-end"
+        } w-full`}>
         <div
           className={`flex ${
             isSelf ? "flex-row" : "flex-row-reverse"

@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { animateScroll as scroll } from "react-scroll";
 
 import { useChatSocket } from "@/app/hooks/use-chat-socket";
+import { useSendMessageHook } from "@/app/hooks/use-send-message";
 import { useGetDirectMessages } from "@/app/services/chat/getDirectMessages";
 import { MessageWithMember } from "@/app/types/server";
 import ChatDirectMessage from "@/components/chat/chat-direct-message";
@@ -46,15 +47,20 @@ export const ChatDirectMessages = ({
   const { ref, inView } = useInView({
     threshold: 0,
   });
-
+  const { isSent, setSentFalse } = useSendMessageHook();
   const searchParams = useSearchParams();
   const messageId = searchParams?.get("messageId");
 
-  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useGetDirectMessages({
-      conversationId: chatId,
-      messageId: messageId ? messageId : "",
-    });
+  const {
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    isFetchedAfterMount,
+  } = useGetDirectMessages({
+    conversationId: chatId,
+    messageId: messageId ? messageId : "",
+  });
 
   const addKey = useMemo(() => `chat:${chatId}:messages`, [chatId]);
   const updateKey = useMemo(() => `chat:${chatId}:messages:update`, [chatId]);
@@ -88,9 +94,28 @@ export const ChatDirectMessages = ({
     fetchNextPage();
   }, [fetchNextPage, hasNextPage, inView]);
 
-  const scrollToBottom = () => {
-    scroll.scrollToBottom();
-  };
+  useEffect(() => {
+    if (isFetchedAfterMount) {
+      setTimeout(() => {
+        const element = document.getElementById("emptyDiv");
+
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 2000);
+    }
+  }, [isFetchedAfterMount]);
+
+  useEffect(() => {
+    if (isSent) {
+      const element = document.getElementById("emptyDiv");
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+      setSentFalse();
+    }
+  }, [isSent, setSentFalse]);
 
   if (!data) {
     return null;
@@ -139,6 +164,7 @@ export const ChatDirectMessages = ({
           </div>
         )}
       </div>
+      <div id="emptyDiv" />
     </ScrollArea>
   );
 };

@@ -123,7 +123,7 @@ export async function GET(req: Request) {
         where: {
           conversationId: conversationId as string,
           createdAt: {
-            gte: messages[messages.length - 1].createdAt,
+            gt: messages[messages.length - 1].createdAt,
           },
         },
         orderBy: {

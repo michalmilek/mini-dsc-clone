@@ -29,7 +29,7 @@ const NavigationUpdateChecker = ({
 
   const filteredArr = [...new Set([...ids, ...friendsIds, myId])];
 
-  useGlobalSocket(filteredArr);
+  useGlobalSocket(filteredArr, myId);
 
   return null;
 };
