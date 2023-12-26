@@ -18,7 +18,9 @@ export type ModalType =
   | "inviteFriend"
   | "blacklist"
   | "joinServer"
-  | "findMessage";
+  | "findMessage"
+  | "findDirectMessage"
+  | "findFriendshipMessage";
 
 interface ModalData {
   server?: Server;
@@ -32,6 +34,7 @@ interface ModalData {
   };
   blacklist?: Profile[];
   chatId?: string;
+  chatType?: "serverConversation" | "friendship" | "channel";
   messageId?: string;
 }
 

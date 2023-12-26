@@ -16,12 +16,54 @@ export async function GET(req: Request) {
 
     const cursor = searchParams.get("cursor");
     const friendshipId = searchParams.get("friendshipId");
+    const messageId = searchParams.get("messageId");
+
+    if (!friendshipId) {
+      return new NextResponse("Friendship not found", { status: 404 });
+    }
+
+    const count = await db.friendshipMessage.count({
+      where: {
+        conversationId: friendshipId as string,
+      },
+    });
 
     const messageAmount = 10;
 
+    let messageLookedAt: any;
+
+    if (messageId) {
+      messageLookedAt = await db.friendshipMessage.findFirst({
+        where: {
+          id: messageId as string,
+          conversationId: friendshipId as string,
+        },
+      });
+    }
+
     let messages: FriendshipMessage[] = [];
 
-    if (cursor) {
+    if (messageLookedAt) {
+      messages = await db.friendshipMessage.findMany({
+        where: {
+          conversationId: friendshipId as string,
+          createdAt: {
+            gte: messageLookedAt.createdAt,
+          },
+        },
+        include: {
+          friend: true,
+          reactions: {
+            include: {
+              profile: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    } else if (cursor) {
       messages = await db.friendshipMessage.findMany({
         take: messageAmount,
         skip: 1,
@@ -65,8 +107,24 @@ export async function GET(req: Request) {
 
     let nextCursor = null;
 
-    if (messages.length === messageAmount) {
-      nextCursor = messages[messageAmount - 1].id;
+    if (messages.length !== count - 1) {
+      const allMessages = await db.friendshipMessage.findMany({
+        where: {
+          conversationId: friendshipId as string,
+          createdAt: {
+            gte: messages[messages.length - 1].createdAt,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      if (allMessages.length !== count) {
+        nextCursor = messages[messages.length - 1].id;
+      } else {
+        nextCursor = null;
+      }
     }
 
     return NextResponse.json({ items: messages, nextCursor });

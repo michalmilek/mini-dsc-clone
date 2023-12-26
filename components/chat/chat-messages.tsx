@@ -1,19 +1,19 @@
 "use client";
 
-import { MoreHorizontal } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
-import { useInView } from "react-intersection-observer";
-import { animateScroll as scroll } from "react-scroll";
+import { MoreHorizontal } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useMemo } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { animateScroll as scroll } from 'react-scroll';
 
-import { useChatSocket } from "@/app/hooks/use-chat-socket";
-import { useGetMessages } from "@/app/services/chat/getMessages";
-import { MessageWithMember } from "@/app/types/server";
-import ChatLoader from "@/components/chat/chat-loader";
-import ChatMessage from "@/components/chat/chat-message";
-import { ChatWelcome } from "@/components/chat/chat-welcome";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Member } from "@prisma/client";
+import { useChatSocket } from '@/app/hooks/use-chat-socket';
+import { useGetMessages } from '@/app/services/chat/getMessages';
+import { MessageWithMember } from '@/app/types/server';
+import ChatLoader from '@/components/chat/chat-loader';
+import ChatMessage from '@/components/chat/chat-message';
+import { ChatWelcome } from '@/components/chat/chat-welcome';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Member } from '@prisma/client';
 
 interface Props {
   name: string;
@@ -49,7 +49,6 @@ export const ChatMessages = ({
 
   const searchParams = useSearchParams();
   const messageId = searchParams?.get("messageId");
-  console.log("🚀 ~ messageId:", messageId);
 
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useGetMessages({

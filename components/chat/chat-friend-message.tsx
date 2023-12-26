@@ -3,7 +3,7 @@
 import { format, formatDistanceToNow } from "date-fns";
 import { Check, Edit, Trash } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Profile } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -58,6 +59,7 @@ const ChatFriendMessage = ({
   const fullDate = format(postDate, "MMMM dd, yyyy HH:mm");
   const isImg = !!message.fileUrl;
   const params = useParams();
+  const searchParams = useSearchParams();
   const { mutate } = useEditMessage();
 
   const { register, handleSubmit } = useForm<FormData>({
@@ -92,6 +94,9 @@ const ChatFriendMessage = ({
   const myReaction = message.reactions?.find(
     (reaction) => reaction.profile.id === member.id
   );
+
+  const searchParamsMessageId = searchParams?.get("messageId");
+  const isLookedFor = message.id === searchParamsMessageId;
 
   return (
     <div
@@ -188,12 +193,22 @@ const ChatFriendMessage = ({
                 </Button>
               </form>
             ) : (
-              <span className={`px-4 py-2 text-sm`}>{message.content}</span>
+              <span
+                className={cn(
+                  `px-4 py-2 text-sm`,
+                  isLookedFor && "bg-blue-700 dark:bg-blue-300"
+                )}>
+                {message.content}
+              </span>
             )}
           </div>
         ) : (
           <div className={`flex ${isSelf ? "flex-row" : "flex-row-reverse"}`}>
-            <span className={`px-4 py-2 italic text-xs`}>
+            <span
+              className={cn(
+                `px-4 py-2 italic text-xs`,
+                isLookedFor && "bg-blue-700 dark:bg-blue-300"
+              )}>
               Message was deleted
             </span>
           </div>

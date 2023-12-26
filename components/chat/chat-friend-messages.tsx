@@ -1,6 +1,7 @@
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { useInView } from "react-intersection-observer";
 import { animateScroll as scroll } from "react-scroll";
@@ -49,9 +50,12 @@ export const ChatFriendMessages = ({
   const { ref, inView } = useInView({
     threshold: 0,
   });
+  const searchParams = useSearchParams();
+  const messageId = searchParams?.get("messageId");
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useGetFriendMessages({
       friendshipId: chatId,
+      messageId: messageId ? messageId : "",
     });
   const { execute } = useAsync(markAsRead);
 

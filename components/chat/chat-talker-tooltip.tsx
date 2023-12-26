@@ -11,7 +11,6 @@ import {
 import { Profile } from "@prisma/client";
 
 const ChatTalkerTooltip = ({ profile }: { profile: Profile }) => {
-  console.log("🚀 ~ profile:", profile);
   return (
     <TooltipProvider>
       <Tooltip>

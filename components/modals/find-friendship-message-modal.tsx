@@ -2,14 +2,13 @@
 
 import { format } from "date-fns";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
 import useAsync from "@/app/hooks/use-async";
-import { useDebounce } from "@/app/hooks/use-debounce";
 import { useModal } from "@/app/hooks/use-modal-store";
-import { searchForMessage } from "@/app/services/chat/searchForMessage";
+import { searchForFriendMessage } from "@/app/services/chat/searchForMessage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -20,7 +19,6 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 
 import { Button } from "../ui/button";
 import {
@@ -43,14 +41,14 @@ const schema = z.object({
   message: z.string().min(1),
 });
 
-export const FindMessageModal = () => {
-  const queryClient = useQueryClient();
+export const FindFriendshipMessageModal = () => {
   const { toast } = useToast();
-  const { type, isOpen, onClose, data: storeData, onOpen } = useModal();
+  const { type, isOpen, onClose, data: serverData, onOpen } = useModal();
   const router = useRouter();
   const pathname = usePathname();
-  const { execute, error, value, status } = useAsync(searchForMessage);
+  const { execute, error, value, status } = useAsync(searchForFriendMessage);
 
+  const [copied, setCopied] = useState(false);
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -58,19 +56,11 @@ export const FindMessageModal = () => {
     },
   });
 
-  const { watch } = form;
-
-  const debouncedValue = useDebounce(watch("message"), 500);
-
   const onSubmit = (data: FormData) => {
-    onClose();
-  };
-
-  useEffect(() => {
-    if (storeData?.chatId) {
-      execute(debouncedValue, storeData.chatId);
+    if (serverData.chatId) {
+      execute(data.message, serverData.chatId);
     }
-  }, [storeData.chatId, execute, debouncedValue]);
+  };
 
   const handleClose = () => {
     form.reset();
@@ -83,7 +73,9 @@ export const FindMessageModal = () => {
       onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Find a message</DialogTitle>
+          <DialogTitle>
+            Find a message in your friendship conversation
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -117,10 +109,7 @@ export const FindMessageModal = () => {
                         className="flex w-full justify-between items-center"
                         onClick={() => {
                           router.replace(`${pathname}?messageId=${message.id}`);
-                          queryClient.removeQueries({
-                            queryKey: ["messages", storeData.chatId],
-                          });
-                          console.log("aaaa");
+                          onClose();
                         }}>
                         <div>
                           <p>{message.content}</p>
@@ -133,12 +122,10 @@ export const FindMessageModal = () => {
                         </div>
                         <Avatar>
                           <AvatarImage
-                            src={message.member.profile.imageUrl}
-                            alt={message.member.profile.name}
+                            src={message.friend.imageUrl}
+                            alt={message.friend.name}
                           />
-                          <AvatarFallback>
-                            {message.member.profile.name}
-                          </AvatarFallback>
+                          <AvatarFallback>{message.friend.name}</AvatarFallback>
                         </Avatar>
                       </button>
                     </li>
@@ -154,6 +141,7 @@ export const FindMessageModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
+              <Button>Go to</Button>
             </DialogFooter>
           </form>
         </Form>

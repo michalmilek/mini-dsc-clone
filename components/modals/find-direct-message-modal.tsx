@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -9,7 +9,7 @@ import * as z from "zod";
 import useAsync from "@/app/hooks/use-async";
 import { useDebounce } from "@/app/hooks/use-debounce";
 import { useModal } from "@/app/hooks/use-modal-store";
-import { searchForMessage } from "@/app/services/chat/searchForMessage";
+import { searchForDirectMessage } from "@/app/services/chat/searchForMessage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
@@ -43,13 +43,14 @@ const schema = z.object({
   message: z.string().min(1),
 });
 
-export const FindMessageModal = () => {
+export const FindDirectMessageModal = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const { type, isOpen, onClose, data: storeData, onOpen } = useModal();
+  const { type, isOpen, onClose, data: serverData, onOpen } = useModal();
   const router = useRouter();
   const pathname = usePathname();
-  const { execute, error, value, status } = useAsync(searchForMessage);
+  const params = useParams();
+  const { execute, error, value, status } = useAsync(searchForDirectMessage);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -58,19 +59,24 @@ export const FindMessageModal = () => {
     },
   });
 
-  const { watch } = form;
-
+  const { watch, handleSubmit } = form;
   const debouncedValue = useDebounce(watch("message"), 500);
 
-  const onSubmit = (data: FormData) => {
-    onClose();
+  const onSubmit = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["messages"],
+    });
   };
 
   useEffect(() => {
-    if (storeData?.chatId) {
-      execute(debouncedValue, storeData.chatId);
+    if (params?.memberId && params?.serverId) {
+      execute(
+        debouncedValue,
+        params?.memberId as string,
+        params?.serverId as string
+      );
     }
-  }, [storeData.chatId, execute, debouncedValue]);
+  }, [params?.serverId, params?.memberId, execute, debouncedValue]);
 
   const handleClose = () => {
     form.reset();
@@ -83,27 +89,29 @@ export const FindMessageModal = () => {
       onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Find a message</DialogTitle>
+          <DialogTitle>Find a direct message</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
             className="space-y-8"
-            onSubmit={form.handleSubmit(onSubmit)}>
+            onSubmit={handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Message</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Enter the part of the message you are looking for
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                return (
+                  <FormItem>
+                    <FormLabel>Message</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      Enter the part of the message you are looking for
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             {value && value.length > 0 && (
@@ -117,10 +125,7 @@ export const FindMessageModal = () => {
                         className="flex w-full justify-between items-center"
                         onClick={() => {
                           router.replace(`${pathname}?messageId=${message.id}`);
-                          queryClient.removeQueries({
-                            queryKey: ["messages", storeData.chatId],
-                          });
-                          console.log("aaaa");
+                          onClose();
                         }}>
                         <div>
                           <p>{message.content}</p>

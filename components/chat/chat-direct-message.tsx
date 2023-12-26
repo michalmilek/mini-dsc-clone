@@ -3,7 +3,7 @@
 import { format, formatDistanceToNow } from "date-fns";
 import { Edit, ShieldAlert, ShieldCheck, Trash, User } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Member } from "@prisma/client";
@@ -59,6 +60,7 @@ const ChatDirectMessage = ({
   const postDate = new Date(message.createdAt);
   const timeAgo = formatDistanceToNow(postDate, { addSuffix: true });
   const fullDate = format(postDate, "MMMM dd, yyyy HH:mm");
+  const searchParams = useSearchParams();
   const isImg = !!message.fileUrl;
   const params = useParams();
   const { mutate } = useEditMessage();
@@ -108,6 +110,9 @@ const ChatDirectMessage = ({
     type === "channel"
       ? "/api/socket/server/"
       : "/api/socket/server/conversation/";
+
+  const searchParamsMessageId = searchParams?.get("messageId");
+  const isLookedFor = message.id === searchParamsMessageId;
 
   return (
     <div
@@ -213,12 +218,22 @@ const ChatDirectMessage = ({
                 </Button>
               </form>
             ) : (
-              <span className={`px-4 py-2 text-sm`}>{message.content}</span>
+              <span
+                className={cn(
+                  `px-4 py-2 text-sm`,
+                  isLookedFor && "bg-blue-700 dark:bg-blue-300"
+                )}>
+                {message.content}
+              </span>
             )}
           </div>
         ) : (
           <div className={`flex ${isSelf ? "flex-row" : "flex-row-reverse"}`}>
-            <span className={`px-4 py-2 italic text-xs`}>
+            <span
+              className={cn(
+                `px-4 py-2 italic text-xs`,
+                isLookedFor && "bg-blue-700 dark:bg-blue-300"
+              )}>
               Message was deleted
             </span>
           </div>

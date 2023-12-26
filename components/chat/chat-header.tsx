@@ -1,15 +1,15 @@
 "use client";
 
-import { Bell, Hash, Phone, Search, Video } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Bell, Hash, Phone, Search, Video } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { useModal } from "@/app/hooks/use-modal-store";
-import { MemberChat } from "@/app/types/server";
-import { SocketIndicator } from "@/components/socket-indicator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Channel } from "@prisma/client";
+import { useModal } from '@/app/hooks/use-modal-store';
+import { MemberChat } from '@/app/types/server';
+import { SocketIndicator } from '@/components/socket-indicator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Channel } from '@prisma/client';
 
 interface Props {
   type: "conversation" | "channel";
@@ -21,7 +21,20 @@ const ChatHeader = ({ channel, type, member }: Props) => {
   const { onOpen } = useModal();
   const [isMounted, setIsMounted] = useState(false);
   const params = useParams();
-  console.log("🚀 ~ params:", params);
+
+  const conversationId =
+    type === "conversation" && params?.memberId
+      ? params?.memberId
+      : params?.friendshipId;
+
+  const conversationType =
+    type === "conversation" && params?.memberId
+      ? "serverConversation"
+      : "friendship";
+
+  const chatType = type === "channel" ? "channel" : conversationType;
+
+  const chatId = type === "channel" ? params?.channelId : conversationId;
 
   useEffect(() => {
     setIsMounted(true);
@@ -93,11 +106,17 @@ const ChatHeader = ({ channel, type, member }: Props) => {
             </>
           )}
           <Button
-            onClick={() =>
-              onOpen("findMessage", {
-                chatId: params?.channelId as string,
-              })
-            }
+            onClick={() => {
+              if (chatType === "channel") {
+                onOpen("findMessage", {
+                  chatId: chatId as string,
+                });
+              } else if (chatType === "serverConversation") {
+                onOpen("findDirectMessage", {
+                  chatId: chatId as string,
+                });
+              }
+            }}
             type="button">
             <Search />
           </Button>

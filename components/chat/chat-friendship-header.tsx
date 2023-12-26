@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, Phone, Search, Video } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useModal } from "@/app/hooks/use-modal-store";
@@ -22,6 +23,8 @@ const ChatFriendshipHeader = ({ member, friendship }: Props) => {
   const [isMounted, setIsMounted] = useState(false);
 
   const { socket } = useSocket();
+
+  const params = useParams();
 
   useEffect(() => {
     setIsMounted(true);
@@ -81,7 +84,15 @@ const ChatFriendshipHeader = ({ member, friendship }: Props) => {
               <Video />
             </Button>
           </>
-          <Button type="button">
+          <Button
+            onClick={() => {
+              if (params?.friendshipId) {
+                onOpen("findFriendshipMessage", {
+                  chatId: params.friendshipId as string,
+                });
+              }
+            }}
+            type="button">
             <Search />
           </Button>
           <Button type="button">

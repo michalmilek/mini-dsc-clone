@@ -5,14 +5,17 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 interface GetMessageParams {
   cursor?: string;
   friendshipId?: string;
+  messageId?: string;
 }
 
 export function useGetFriendMessages({
   friendshipId,
   initialCursor = 1,
+  messageId,
 }: {
   friendshipId: string;
   initialCursor?: number;
+  messageId?: string;
 }) {
   const getMessages = async ({
     pageParam,
@@ -21,7 +24,11 @@ export function useGetFriendMessages({
   }) => {
     const response = await axios
       .get(`/api/friend-messages?friendshipId=${friendshipId}`, {
-        params: { ...pageParam, cursor: pageParam?.cursor },
+        params: {
+          ...pageParam,
+          cursor: pageParam?.cursor,
+          messageId: pageParam?.messageId,
+        },
       })
       .then((res) => res.data);
 
@@ -37,11 +44,13 @@ export function useGetFriendMessages({
       return {
         friendshipId: friendshipId,
         cursor: lastPage.nextCursor,
+        messageId: "",
       };
     },
     initialPageParam: {
       cursor: "",
       friendshipId: friendshipId,
+      messageId: messageId || "",
     },
   });
 }

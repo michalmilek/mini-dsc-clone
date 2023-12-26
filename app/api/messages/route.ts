@@ -47,7 +47,7 @@ export async function GET(req: Request) {
         where: {
           channelId: channelId as string,
           createdAt: {
-            gt: messageLookedAt.createdAt,
+            gte: messageLookedAt.createdAt,
           },
         },
         include: {
@@ -118,7 +118,7 @@ export async function GET(req: Request) {
 
     let nextCursor = null;
 
-    if (messages.length !== count - 1) {
+    if (messages.length !== count) {
       const allMessages = await db.message.findMany({
         where: {
           channelId: channelId as string,

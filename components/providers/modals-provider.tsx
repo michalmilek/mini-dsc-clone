@@ -5,6 +5,8 @@ import { useModal } from '@/app/hooks/use-modal-store';
 import { AddFriendModal } from '@/components/modals/add-friend-modal';
 import { BlacklistModal } from '@/components/modals/blacklist-modal';
 import { DeleteMessageModal } from '@/components/modals/delete-message-modal';
+import { FindDirectMessageModal } from "@/components/modals/find-direct-message-modal";
+import { FindFriendshipMessageModal } from "@/components/modals/find-friendship-message-modal";
 import { FindMessageModal } from "@/components/modals/find-message-modal";
 import { JoinServerModal } from "@/components/modals/join-server-modal";
 import { MessageFileModal } from "@/components/modals/message-file-modal";
@@ -47,6 +49,8 @@ const ModalsProvider = () => {
       {type === "blacklist" && <BlacklistModal />}
       {type === "joinServer" && <JoinServerModal />}
       {type === "findMessage" && <FindMessageModal />}
+      {type === "findDirectMessage" && <FindDirectMessageModal />}
+      {type === "findFriendshipMessage" && <FindFriendshipMessageModal />}
     </>
   );
 };

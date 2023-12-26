@@ -15,21 +15,40 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
 
     const cursor = searchParams.get("cursor");
-    const conversationid = searchParams.get("conversationId");
+    const conversationId = searchParams.get("conversationId");
+    const messageId = searchParams.get("messageId");
+
+    if (!conversationId) {
+      return new NextResponse("Channel not found", { status: 404 });
+    }
+
+    const count = await db.directMessage.count({
+      where: {
+        conversationId: conversationId,
+      },
+    });
 
     const messageAmount = 10;
 
+    let messageLookedAt: any;
+
+    if (messageId) {
+      messageLookedAt = await db.directMessage.findFirst({
+        where: {
+          id: messageId as string,
+        },
+      });
+    }
+
     let messages: DirectMessage[] = [];
 
-    if (cursor) {
+    if (messageLookedAt) {
       messages = await db.directMessage.findMany({
-        take: messageAmount,
-        skip: 1,
-        cursor: {
-          id: cursor,
-        },
         where: {
-          conversationId: conversationid as string,
+          conversationId: conversationId as string,
+          createdAt: {
+            gte: messageLookedAt.createdAt,
+          },
         },
         include: {
           member: {
@@ -37,7 +56,37 @@ export async function GET(req: Request) {
               profile: true,
             },
           },
-          reactions: true,
+          reactions: {
+            include: {
+              profile: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+    } else if (cursor) {
+      messages = await db.directMessage.findMany({
+        take: messageAmount,
+        skip: 1,
+        cursor: {
+          id: cursor,
+        },
+        where: {
+          conversationId: conversationId as string,
+        },
+        include: {
+          member: {
+            include: {
+              profile: true,
+            },
+          },
+          reactions: {
+            include: {
+              profile: true,
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -47,7 +96,7 @@ export async function GET(req: Request) {
       messages = await db.directMessage.findMany({
         take: messageAmount,
         where: {
-          conversationId: conversationid as string,
+          conversationId: conversationId as string,
         },
         include: {
           member: {
@@ -69,8 +118,24 @@ export async function GET(req: Request) {
 
     let nextCursor = null;
 
-    if (messages.length === messageAmount) {
-      nextCursor = messages[messageAmount - 1].id;
+    if (messages.length !== count) {
+      const allMessages = await db.directMessage.findMany({
+        where: {
+          conversationId: conversationId as string,
+          createdAt: {
+            gte: messages[messages.length - 1].createdAt,
+          },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      if (allMessages.length !== count - 1) {
+        nextCursor = messages[messages.length - 1].id;
+      } else {
+        nextCursor = null;
+      }
     }
 
     return NextResponse.json({ items: messages, nextCursor });
