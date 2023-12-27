@@ -1,4 +1,3 @@
-import { ChannelType, MemberRole } from "@prisma/client";
 import { Hash, Mic, ShieldAlert, ShieldCheck, User, Video } from "lucide-react";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -9,6 +8,7 @@ import ServerSearch from "@/components/server/server-search";
 import { Separator } from "@/components/ui/separator";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
+import { ChannelType, MemberRole } from "@prisma/client";
 
 const iconMap = {
   [ChannelType.TEXT]: <Hash />,
@@ -77,7 +77,7 @@ const ServerIdLayout = async ({
   )?.role;
 
   return (
-    <div className="h-full pl-32 w-full">
+    <div className="h-full pl-0 sm:pl-32 w-full">
       <nav className="hidden fixed md:flex h-full w-60 z-20 flex-col inset-y-0 bg-gray-200 dark:bg-gray-700 shadow-xl p-3 gap-4">
         <ServerDropdown
           server={server}

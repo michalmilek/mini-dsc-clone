@@ -15,7 +15,7 @@ const ChatTalkerTooltip = ({ profile }: { profile: Profile }) => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
-          <div className="h-12 w-12 relative rounded-full">
+          <div className="h-8 w-8 md:h-12 md:w-12 relative rounded-full">
             <Image
               fill
               src={profile.imageUrl}

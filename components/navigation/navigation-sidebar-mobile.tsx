@@ -18,10 +18,12 @@ import { Separator } from "../ui/separator";
 import NavigationAdd from "./navigation-add";
 import NavigationItem from "./navigation-item";
 
-const NavigationSidebar = async () => {
+const NavigationSidebarMobile = async () => {
   const profile = await currentProfile();
 
-  if (!profile) redirect("/");
+  if (!profile) {
+    redirect("/");
+  }
 
   const servers = await db.server.findMany({
     where: {
@@ -108,8 +110,7 @@ const NavigationSidebar = async () => {
 
   return (
     <>
-      {hasDirectMessages && <title>Mini DSC - new messages</title>}
-      <aside className="fixed inset-y-0 left-0 flex-col justify-between  items-center py-3 bg-white dark:bg-black shadow w-32 z-30 hidden sm:flex">
+      <aside className="fixed inset-y-0 left-0 flex-col justify-between  items-center py-3 bg-white dark:bg-black shadow w-32 z-30 flex">
         <div className="flex flex-col w-full">
           <div className="space-y-3">
             <NavigationAdd label="Create server" />
@@ -192,4 +193,4 @@ const NavigationSidebar = async () => {
   );
 };
 
-export default NavigationSidebar;
+export default NavigationSidebarMobile;

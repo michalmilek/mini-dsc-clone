@@ -114,7 +114,9 @@ const ChatFriendMessage = ({
           className={`flex ${
             isSelf ? "flex-row" : "flex-row-reverse"
           } items-center gap-2`}>
-          <span className="text-xl font-bold">{message.friend.name}</span>
+          <span className="text-md md:text-xl font-bold">
+            {message.friend.name}
+          </span>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>

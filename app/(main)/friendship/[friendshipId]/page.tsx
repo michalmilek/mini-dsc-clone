@@ -41,7 +41,7 @@ const Page = async ({ params }: { params: { friendshipId: string } }) => {
   return (
     <>
       <title>{title}</title>
-      <div className="h-screen overflow-y-hidden justify-between flex flex-col relative pl-32">
+      <div className="h-screen overflow-y-hidden justify-between flex flex-col relative pl-0 sm:pl-32">
         <ChatFriendshipHeader
           member={member}
           friendship={friendship}

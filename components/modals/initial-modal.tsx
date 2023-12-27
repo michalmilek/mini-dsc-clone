@@ -40,9 +40,9 @@ const schema = z.object({
   imageUrl: z.string().url(),
 });
 
-export const InitiaLmodal = () => {
+export const Initialmodal = () => {
   const router = useRouter();
-  const { onClose } = useModal();
+  const { onClose, isOpen } = useModal();
   const { mutate } = useCreateNewServer();
   const [isLoaded, setIsLoaded] = useState(false);
   const form = useForm<FormData>({
@@ -73,7 +73,7 @@ export const InitiaLmodal = () => {
   return (
     <Dialog
       onOpenChange={onClose}
-      open>
+      open={isOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Customize your server</DialogTitle>
