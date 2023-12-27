@@ -122,7 +122,7 @@ const ChatMessage = ({
         }>
         <div
           className="relative 
-        w-12 h-12">
+        md:w-12 md:h-12 w-8 h-8">
           <Image
             layout="fill"
             src={message.member.profile.imageUrl}
@@ -145,7 +145,7 @@ const ChatMessage = ({
                 ? `/server/${params.serverId}/conversations/${message.memberId}`
                 : "#"
             }>
-            <span className="text-xl font-bold">
+            <span className="text-md md:text-xl font-bold">
               {message.member.profile.name}
             </span>
           </Link>
