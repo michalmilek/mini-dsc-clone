@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import { useBlockUser } from "@/app/services/user/block-user";
 import { useRemoveFriend } from "@/app/services/user/remove-friend";
@@ -35,18 +34,11 @@ const NavigationFriend = ({ friendship }: { friendship: Friendship }) => {
     friendship.friendOne.imageUrl === user?.imageUrl
       ? friendship.friendTwo
       : friendship.friendOne;
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   if (!user) {
     return null;
   }
 
-  if (!mounted) {
-    return null;
-  }
   return (
     <li
       className={cn(

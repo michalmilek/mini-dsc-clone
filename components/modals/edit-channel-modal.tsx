@@ -64,7 +64,7 @@ export const EditChannelModal = () => {
     },
   });
 
-  const { mutate } = useEditChannel();
+  const { mutate, isPending } = useEditChannel();
 
   const onSubmit = (formData: FormData) => {
     mutate(
@@ -80,6 +80,12 @@ export const EditChannelModal = () => {
           });
           router.refresh();
           handleClose();
+        },
+        onError: () => {
+          toast({
+            variant: "destructive",
+            title: `Something went wrong. Please try again.`,
+          });
         },
       }
     );
@@ -152,7 +158,7 @@ export const EditChannelModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
-              <Button>Submit</Button>
+              <Button isLoading={isPending}>Submit</Button>
             </DialogFooter>
           </form>
         </Form>

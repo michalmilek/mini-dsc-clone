@@ -21,7 +21,7 @@ export const DeleteChannelModal = () => {
   const router = useRouter();
   const { toast } = useToast();
 
-  const { mutate } = useDeleteChannel();
+  const { mutate, isPending } = useDeleteChannel();
 
   if (!data.server && !data.channel) {
     return null;
@@ -70,6 +70,7 @@ export const DeleteChannelModal = () => {
             Close
           </Button>
           <Button
+            isLoading={isPending}
             onClick={onClick}
             className="w-full sm:w-[50%]">
             Delete

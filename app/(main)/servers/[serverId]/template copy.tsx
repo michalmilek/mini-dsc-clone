@@ -1,13 +1,16 @@
-import { Hash, Mic, ShieldAlert, ShieldCheck, User, Video } from "lucide-react";
-import { redirect } from "next/navigation";
-import React from "react";
+"use client";
 
+import { Hash, Mic, ShieldAlert, ShieldCheck, User, Video } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import React, { useEffect } from "react";
+
+import useAsync from "@/app/hooks/use-async";
+import { getServer } from "@/app/services/server/getServer";
 import ServerChannelsList from "@/components/server/server-channels-list";
 import ServerDropdown from "@/components/server/server-dropdown";
 import ServerSearch from "@/components/server/server-search";
 import { Separator } from "@/components/ui/separator";
-import { currentProfile } from "@/lib/current-profile";
-import { db } from "@/lib/db";
+import { useUser } from "@clerk/nextjs";
 import { ChannelType, MemberRole } from "@prisma/client";
 
 const iconMap = {
@@ -22,42 +25,31 @@ const iconRoleMap = {
   [MemberRole.MODERATOR]: <ShieldCheck />,
 };
 
-const ServerIdLayout = async ({
+const ServerIdTemplate = ({
   children,
-  params,
+  serverId,
 }: {
   children: React.ReactNode;
-  params: { serverId: string };
+  serverId: string;
 }) => {
-  const profile = await currentProfile();
+  console.log("🚀 ~ serverId:", serverId);
+  const params = useParams();
+  const { value: server, execute } = useAsync(getServer);
+  const router = useRouter();
+  const { user } = useUser();
 
-  if (!profile) {
-    return redirect("/");
+  useEffect(() => {
+    if (params?.serverId) {
+      execute(params.serverId);
+    }
+  }, [params?.serverId, execute]);
+
+  if (!params?.serverId) {
+    return <div>No serverIDfdsfds</div>;
   }
 
-  const server = await db.server.findUnique({
-    where: {
-      id: params.serverId,
-    },
-    include: {
-      channels: {
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
-      members: {
-        include: {
-          profile: true,
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
-      },
-    },
-  });
-
   if (!server) {
-    return redirect("/");
+    return <div>Server not found</div>;
   }
 
   const textChannels = server.channels.filter(
@@ -70,11 +62,19 @@ const ServerIdLayout = async ({
     (channel) => channel.type === "VIDEO"
   );
 
-  const members = server.members.filter((member) => member.id !== profile.id);
+  const members = server.members.filter(
+    (member) => member.profile.imageUrl !== user?.imageUrl
+  );
 
-  const role = server.members.find(
-    (member) => member.profileId === profile.id
-  )?.role;
+  const member = server.members.find(
+    (member) => member.profile.imageUrl === user?.imageUrl
+  );
+
+  if (!member) {
+    return <div>Member not found</div>;
+  }
+
+  const role = member?.role;
 
   return (
     <div className="h-full pl-0 sm:pl-32 w-full">
@@ -129,7 +129,7 @@ const ServerIdLayout = async ({
         <ServerChannelsList
           role={role}
           server={server}
-          myId={profile.id}
+          profileId={member?.profile.email}
         />
       </nav>
       <main className="h-full md:pl-60">{children}</main>
@@ -137,4 +137,4 @@ const ServerIdLayout = async ({
   );
 };
 
-export default ServerIdLayout;
+export default ServerIdTemplate;

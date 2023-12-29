@@ -21,7 +21,7 @@ export const DeleteServerModal = () => {
   const router = useRouter();
   const { toast } = useToast();
 
-  const { mutate } = useDeleteChannel();
+  const { mutate, isPending } = useDeleteChannel();
 
   const onClick = () => {
     mutate(`/api/servers/${data.server?.id}/delete-server`, {
@@ -62,6 +62,7 @@ export const DeleteServerModal = () => {
             Close
           </Button>
           <Button
+            isLoading={isPending}
             onClick={onClick}
             className="w-full sm:w-[50%]">
             Delete

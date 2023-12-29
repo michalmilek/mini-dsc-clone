@@ -1,4 +1,5 @@
 import { cva, VariantProps } from "class-variance-authority";
+import { Loader } from "lucide-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -37,6 +38,7 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  isLoading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -44,10 +46,16 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          "flex items-center gap-2"
+        )}
         ref={ref}
         {...props}
-      />
+        disabled={props.disabled || props.isLoading}>
+        {props.isLoading && <Loader className="animate-spin" />}
+        {props.children}
+      </Comp>
     );
   }
 );

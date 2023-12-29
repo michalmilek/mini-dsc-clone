@@ -17,6 +17,7 @@ import ChatFriendMessage from "@/components/chat/chat-friend-message";
 import ChatLoader from "@/components/chat/chat-loader";
 import { ChatWelcome } from "@/components/chat/chat-welcome";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ChatMessagesSkeleton from "@/components/utility/chat-messages-skeleton";
 import { Profile } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -64,6 +65,7 @@ export const ChatFriendMessages = ({
     isFetchingNextPage,
     isSuccess,
     isFetchedAfterMount,
+    isLoading,
   } = useGetFriendMessages({
     friendshipId: chatId,
     messageId: messageId ? messageId : "",
@@ -165,6 +167,10 @@ export const ChatFriendMessages = ({
       setSentFalse();
     }
   }, [isSent, setSentFalse]);
+
+  if (isLoading) {
+    return <ChatMessagesSkeleton />;
+  }
 
   if (!data) {
     return null;

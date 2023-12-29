@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import MessageSkeleton from "@/components/utility/message-skeleton";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -105,6 +106,8 @@ export const FindMessageModal = () => {
                 </FormItem>
               )}
             />
+
+            {status === "loading" && <MessageSkeleton />}
 
             {value && value.length > 0 && (
               <ScrollArea className="max-h-[450px] !overflow-y-auto">

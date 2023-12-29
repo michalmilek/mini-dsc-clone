@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import NoUsersFound from "@/components/utility/no-users-found";
 import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChannelType, Profile } from "@prisma/client";
@@ -61,8 +62,9 @@ export const BlacklistModal = () => {
     isLoading,
   } = useGetUserManual(form.watch("name"));
 
-  const { mutate } = useBlockUser();
-  const { mutate: unblockUser } = useUnblockUser();
+  const { mutate, isPending: isPendingBlockUser } = useBlockUser();
+  const { mutate: unblockUser, isPending: isPendingUnblockUser } =
+    useUnblockUser();
 
   const onSubmit = (formData: FormData) => {
     mutate(formData.name, {
@@ -114,7 +116,7 @@ export const BlacklistModal = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Search</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -123,6 +125,8 @@ export const BlacklistModal = () => {
                 </FormItem>
               )}
             />
+
+            {filteredData && filteredData?.length === 0 && <NoUsersFound />}
 
             {filteredData && filteredData?.length > 0 && (
               <>
@@ -177,6 +181,7 @@ export const BlacklistModal = () => {
                         </div>
                       </div>
                       <Button
+                        isLoading={isPendingUnblockUser}
                         type="button"
                         onClick={() =>
                           unblockUser(user.id, {
@@ -209,7 +214,11 @@ export const BlacklistModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
-              <Button type="submit">Block</Button>
+              <Button
+                isLoading={isPendingBlockUser}
+                type="submit">
+                Block
+              </Button>
             </DialogFooter>
           </form>
         </Form>

@@ -1,37 +1,28 @@
 "use client";
 
-import { Edit, Hash, Mic, Plus, Trash, Video } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import { useModal } from "@/app/hooks/use-modal-store";
 import { ServerWithMembersAndChannels } from "@/app/types/server";
+import ServerChannel from "@/components/server/server-channel";
+import ServerMember from "@/components/server/server-member";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { ChannelType, MemberRole } from "@prisma/client";
+import { MemberRole } from "@prisma/client";
 
 interface ServerSectionProps {
-  label: string;
   role?: MemberRole;
-  sectionType?: "channels" | "members";
-  channelType?: ChannelType;
   server?: ServerWithMembersAndChannels;
+  myId: string;
 }
 
-const ServerChannelsList = ({
-  label,
-  role,
-  sectionType,
-  channelType,
-  server,
-}: ServerSectionProps) => {
-  const [mounted, setMounted] = useState(false);
+const ServerChannelsList = ({ role, server, myId }: ServerSectionProps) => {
   const { onOpen } = useModal();
   const router = useRouter();
 
@@ -48,11 +39,9 @@ const ServerChannelsList = ({
 
   const members = server?.members;
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const membersWithoutMe = members?.filter((member) => member.id !== myId);
 
-  if (!mounted) {
+  if (!role) {
     return null;
   }
 
@@ -79,43 +68,11 @@ const ServerChannelsList = ({
             {textChannels && textChannels?.length > 0 && (
               <ul>
                 {textChannels?.map((channel) => (
-                  <li
-                    className="flex items-center justify-between"
-                    key={channel.id + "textChannels"}>
-                    <Button
-                      className="gap-2"
-                      onClick={() => {
-                        router.push(
-                          `/servers/${server?.id}/channels/${channel.id}`
-                        );
-                      }}
-                      variant={"link"}>
-                      <Hash />
-                      {channel.name}
-                    </Button>
-                    {role !== "GUEST" && (
-                      <div className="flex gap-1 items-center text-sm">
-                        <button
-                          onClick={() =>
-                            onOpen("editChannel", {
-                              channel,
-                            })
-                          }
-                          title="Edit channel">
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          title="Delete channel"
-                          onClick={() =>
-                            onOpen("deleteChannel", {
-                              channel,
-                            })
-                          }>
-                          <Trash className="h-4 w-4" />
-                        </button>
-                      </div>
-                    )}
-                  </li>
+                  <ServerChannel
+                    channel={channel}
+                    role={role}
+                    key={channel.id + "channel list"}
+                  />
                 ))}
               </ul>
             )}
@@ -127,19 +84,11 @@ const ServerChannelsList = ({
             {audioChnanels && audioChnanels?.length > 0 && (
               <ul>
                 {audioChnanels?.map((channel) => (
-                  <li key={channel.id + "voiceChannels"}>
-                    <Button
-                      className="gap-2"
-                      onClick={() => {
-                        router.push(
-                          `/servers/${server?.id}/channels/${channel.id}`
-                        );
-                      }}
-                      variant={"link"}>
-                      <Mic />
-                      {channel.name}
-                    </Button>
-                  </li>
+                  <ServerChannel
+                    channel={channel}
+                    role={role}
+                    key={channel.id + "channel list"}
+                  />
                 ))}
               </ul>
             )}
@@ -151,19 +100,11 @@ const ServerChannelsList = ({
             {videoChannels && videoChannels?.length > 0 && (
               <ul>
                 {videoChannels?.map((channel) => (
-                  <li key={channel.id + "videoChannels"}>
-                    <Button
-                      className="gap-2"
-                      onClick={() => {
-                        router.push(
-                          `/servers/${server?.id}/channels/${channel.id}`
-                        );
-                      }}
-                      variant={"link"}>
-                      <Video />
-                      {channel.name}
-                    </Button>
-                  </li>
+                  <ServerChannel
+                    channel={channel}
+                    role={role}
+                    key={channel.id + "channel list"}
+                  />
                 ))}
               </ul>
             )}
@@ -172,25 +113,13 @@ const ServerChannelsList = ({
         <AccordionItem value="item-4">
           <AccordionTrigger>Members</AccordionTrigger>
           <AccordionContent>
-            {members && members?.length > 0 && (
-              <ul>
+            {membersWithoutMe && membersWithoutMe?.length > 0 && (
+              <ul className="space-y-2">
                 {members?.map((member) => (
-                  <li key={member.id + "members"}>
-                    <Button
-                      className="gap-2"
-                      onClick={() => {
-                        router.push(
-                          `/servers/${server?.id}/conversations/${member.id}`
-                        );
-                      }}
-                      variant={"link"}>
-                      <Avatar>
-                        <AvatarImage src={member.profile.imageUrl} />
-                        <AvatarFallback>{member.profile.name}</AvatarFallback>
-                      </Avatar>
-                      {member.profile.name}
-                    </Button>
-                  </li>
+                  <ServerMember
+                    member={member}
+                    key={member.id + "server member"}
+                  />
                 ))}
               </ul>
             )}

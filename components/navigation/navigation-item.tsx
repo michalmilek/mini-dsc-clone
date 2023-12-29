@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -18,15 +17,8 @@ interface ServerProps {
 }
 
 const NavigationItem = ({ server }: { server: ServerProps }) => {
-  const [mounted, setMounted] = useState(false);
   const params = useParams();
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
-  if (!mounted) {
-    return null;
-  }
   return (
     <li
       title={server.name}

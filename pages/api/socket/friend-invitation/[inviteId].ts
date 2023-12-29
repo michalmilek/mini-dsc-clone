@@ -19,7 +19,7 @@ export default async function handler(
 
       const { inviteId } = req.query;
 
-      const { status } = req.body;
+      const { status }: { status: FriendInvitationStatus } = req.body;
 
       if (!inviteId) {
         return res.status(400).json({ message: "Invalid invite id" });
@@ -35,27 +35,53 @@ export default async function handler(
         return res.status(400).json({ message: "Invalid invite id" });
       }
 
-      const fInvitation = await db.friendInvitation.update({
-        where: {
-          id: inviteId as string,
-        },
-        data: {
-          status: status as FriendInvitationStatus,
-        },
-      });
+      if (status === "DECLINED") {
+        const fInvitation = await db.friendInvitation.delete({
+          where: {
+            id: inviteId as string,
+            OR: [
+              {
+                senderId: profile.id,
+              },
+              {
+                receiverId: profile.id,
+              },
+            ],
+          },
+        });
 
-      const newFriend = await db.friendship.create({
-        data: {
-          friendOneId: invitation.senderId,
-          friendTwoId: invitation.receiverId,
-        },
-      });
+        const invitationResponse = `navigation:${fInvitation.id}:invitationResponse`;
 
-      const invitationResponse = `navigation:${fInvitation.id}:invitationResponse`;
+        res?.socket?.server?.io?.emit(invitationResponse, "new msg");
 
-      res?.socket?.server?.io?.emit(invitationResponse, "new msg");
+        return res.status(200).json(fInvitation);
+      }
 
-      return res.status(200).json(newFriend);
+      if (status === "ACCEPTED") {
+        const fInvitation = await db.friendInvitation.update({
+          where: {
+            id: inviteId as string,
+          },
+          data: {
+            status: status as FriendInvitationStatus,
+          },
+        });
+
+        const newFriend = await db.friendship.create({
+          data: {
+            friendOneId: invitation.senderId,
+            friendTwoId: invitation.receiverId,
+          },
+        });
+
+        const invitationResponse = `navigation:${fInvitation.id}:invitationResponse`;
+
+        res?.socket?.server?.io?.emit(invitationResponse, "new msg");
+
+        return res.status(200).json(newFriend);
+      }
+
+      return res.status(400).json({ message: "Invalid status" });
     } catch (error) {
       console.log("Friend invitation error:", error);
       return res.status(500).json({ message: "Internal server error" });

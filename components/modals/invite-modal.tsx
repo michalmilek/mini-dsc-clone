@@ -12,17 +12,28 @@ import { useGenerateNewServer } from '@/app/services/server/generateNewServer';
 import { useInviteToServer } from '@/app/services/server/serverInvitation';
 import { useGetUserManual } from '@/app/services/user/get-profiles';
 import {
-    Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle
-} from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from '../ui/button';
+import { Button } from "../ui/button";
 import {
-    Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { useToast } from '../ui/use-toast';
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { useToast } from "../ui/use-toast";
 
 interface FormData {
   name: string;
@@ -51,7 +62,7 @@ export const InviteModal = () => {
     isLoading,
   } = useGetUserManual(form.watch("name"));
 
-  const { mutate: inviteFriendToServer } = useInviteToServer();
+  const { mutate: inviteFriendToServer, isPending } = useInviteToServer();
 
   const onCopy = () => {
     if (server?.inviteCode) {
@@ -197,7 +208,7 @@ export const InviteModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
-              <Button>Invite</Button>
+              <Button isLoading={isPending}>Invite</Button>
             </DialogFooter>
           </form>
         </Form>

@@ -63,7 +63,7 @@ export const CreateChannelModal = () => {
     },
   });
 
-  const { mutate } = useCreateChannel();
+  const { mutate, isPending } = useCreateChannel();
 
   const onSubmit = (formData: FormData) => {
     mutate(
@@ -159,7 +159,7 @@ export const CreateChannelModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
-              <Button>Create</Button>
+              <Button isLoading={isPending}>Create</Button>
             </DialogFooter>
           </form>
         </Form>

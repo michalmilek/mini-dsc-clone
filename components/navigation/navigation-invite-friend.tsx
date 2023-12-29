@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+
 
 import { useModal } from "@/app/hooks/use-modal-store";
 
@@ -21,15 +21,7 @@ interface Props {
       </TooltipProvider>; */
 
 const NavigationInviteFriend = ({ label }: Props) => {
-  const [mounted, setMounted] = useState(false);
   const { onOpen } = useModal();
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <div className="w-full flex items-center justify-center">

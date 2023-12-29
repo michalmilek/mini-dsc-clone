@@ -23,7 +23,7 @@ export const DeleteMessageModal = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { mutate } = useDeleteMessage();
+  const { mutate, isPending } = useDeleteMessage();
 
   const onClick = () => {
     if (data.query) {
@@ -76,6 +76,7 @@ export const DeleteMessageModal = () => {
             Close
           </Button>
           <Button
+            isLoading={isPending}
             onClick={onClick}
             className="w-full sm:w-[50%]">
             Delete

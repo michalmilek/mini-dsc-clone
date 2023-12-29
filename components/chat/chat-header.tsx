@@ -2,7 +2,6 @@
 
 import { Bell, Hash, Phone, Search, Video } from 'lucide-react';
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 import { useModal } from "@/app/hooks/use-modal-store";
@@ -20,7 +19,6 @@ interface Props {
 
 const ChatHeader = ({ channel, type, member }: Props) => {
   const { onOpen } = useModal();
-  const [isMounted, setIsMounted] = useState(false);
   const params = useParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -49,16 +47,8 @@ const ChatHeader = ({ channel, type, member }: Props) => {
 
   const chatId = type === "channel" ? params?.channelId : conversationId;
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
-
   return (
-    <header className="flex-1 p-4 sm:p-6 justify-between flex flex-col border-b-2 border-gray-200">
+    <header className="p-4 sm:p-6 justify-between flex flex-col border-b-2 border-gray-300">
       <div className="flex sm:items-center justify-between py-3 ">
         <div className="relative flex items-center space-x-4">
           <div className="flex flex-col leading-tight">

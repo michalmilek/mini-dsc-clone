@@ -43,7 +43,7 @@ const schema = z.object({
 export const Initialmodal = () => {
   const router = useRouter();
   const { onClose, isOpen } = useModal();
-  const { mutate } = useCreateNewServer();
+  const { mutate, isPending } = useCreateNewServer();
   const [isLoaded, setIsLoaded] = useState(false);
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -119,7 +119,13 @@ export const Initialmodal = () => {
               )}
             />
             <DialogFooter>
-              <Button>Create</Button>
+              <Button
+                type="button"
+                onClick={onClose}
+                variant={"destructive"}>
+                Close
+              </Button>
+              <Button isLoading={isPending}>Create</Button>
             </DialogFooter>
           </form>
         </Form>

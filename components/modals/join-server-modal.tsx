@@ -10,16 +10,26 @@ import useAsync from '@/app/hooks/use-async';
 import { useModal } from '@/app/hooks/use-modal-store';
 import { joinServer } from '@/app/services/server/joinServer';
 import {
-    Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle
-} from '@/components/ui/dialog';
-import { zodResolver } from '@hookform/resolvers/zod';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Button } from '../ui/button';
+import { Button } from "../ui/button";
 import {
-    Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage
-} from '../ui/form';
-import { Input } from '../ui/input';
-import { useToast } from '../ui/use-toast';
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { useToast } from "../ui/use-toast";
 
 interface FormData {
   code: string;
@@ -127,7 +137,7 @@ export const JoinServerModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
-              <Button>Join</Button>
+              <Button isLoading={status === "loading"}>Join</Button>
             </DialogFooter>
           </form>
         </Form>

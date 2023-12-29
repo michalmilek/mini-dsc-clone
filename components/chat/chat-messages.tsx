@@ -9,11 +9,12 @@ import { animateScroll as scroll } from 'react-scroll';
 import { useChatSocket } from '@/app/hooks/use-chat-socket';
 import { useSendMessageHook } from "@/app/hooks/use-send-message";
 import { useGetMessages } from "@/app/services/chat/getMessages";
-import { MessageWithMember } from "@/app/types/server";
+import { MessageWithMemberWithReactionsWithProfiles } from "@/app/types/server";
 import ChatLoader from "@/components/chat/chat-loader";
 import ChatMessage from "@/components/chat/chat-message";
 import { ChatWelcome } from "@/components/chat/chat-welcome";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ChatMessagesSkeleton from "@/components/utility/chat-messages-skeleton";
 import { Member } from "@prisma/client";
 
 interface Props {
@@ -29,7 +30,7 @@ interface Props {
 }
 
 interface Response {
-  items: MessageWithMember[];
+  items: MessageWithMemberWithReactionsWithProfiles[];
   nextCursor: string | null | undefined;
 }
 
@@ -59,10 +60,12 @@ export const ChatMessages = ({
     fetchNextPage,
     isFetchingNextPage,
     isFetchedAfterMount,
+    isLoading,
   } = useGetMessages({
     chatId,
     messageId: messageId ? messageId : "",
   });
+  console.log("🚀 ~ isLoading:", isLoading);
 
   const addKey = useMemo(() => `chat:${chatId}:messages`, [chatId]);
   const updateKey = useMemo(() => `chat:${chatId}:messages:update`, [chatId]);
@@ -101,7 +104,7 @@ export const ChatMessages = ({
   };
 
   useEffect(() => {
-    if (isFetchedAfterMount) {
+    if (isFetchedAfterMount && !messageId) {
       setTimeout(() => {
         const element = document.getElementById("emptyDiv");
 
@@ -110,7 +113,7 @@ export const ChatMessages = ({
         }
       }, 2000);
     }
-  }, [isFetchedAfterMount]);
+  }, [isFetchedAfterMount, messageId]);
 
   useEffect(() => {
     if (isSent) {
@@ -122,6 +125,10 @@ export const ChatMessages = ({
       setSentFalse();
     }
   }, [isSent, setSentFalse]);
+
+  if (isLoading) {
+    return <ChatMessagesSkeleton />;
+  }
 
   if (!data) {
     return null;
@@ -155,18 +162,20 @@ export const ChatMessages = ({
               id="messages"
               className="flex flex-col-reverse space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
               {data.pages.map((page) => {
-                return page.items.map((item: MessageWithMember) => (
-                  <ChatMessage
-                    type={type}
-                    socketUrl={socketUrl}
-                    chatId={chatId}
-                    socketQuery={socketQuery}
-                    key={item.id + "messages"}
-                    message={item}
-                    member={member}
-                    isSelf={item.memberId === member.id}
-                  />
-                ));
+                return page.items.map(
+                  (item: MessageWithMemberWithReactionsWithProfiles) => (
+                    <ChatMessage
+                      type={type}
+                      socketUrl={socketUrl}
+                      chatId={chatId}
+                      socketQuery={socketQuery}
+                      key={item.id + "messages"}
+                      message={item}
+                      member={member}
+                      isSelf={item.memberId === member.id}
+                    />
+                  )
+                );
               })}
             </div>
           </>

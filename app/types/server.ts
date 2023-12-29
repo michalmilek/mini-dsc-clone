@@ -9,6 +9,7 @@ import {
   Reaction,
   ReactionToDirectMessage,
   ReactionToFriendshipMessage,
+  Server,
 } from "@prisma/client";
 
 export interface NewServerRequest {
@@ -104,3 +105,9 @@ export type MemberWithProfile = Member & {
 };
 
 export type FriendshipFriend = Profile;
+
+export type ServerWithChannelsAndMembersWithProfiles = Server & {
+  channels: Channel[];
+  members: MemberWithProfile[];
+};
+

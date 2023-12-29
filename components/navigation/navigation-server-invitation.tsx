@@ -2,16 +2,16 @@
 
 import { Check, XIcon } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
 
-import { revalidateLayout } from '@/app/actions/revalidateLayout';
+import { revalidateLayout } from "@/app/actions/revalidateLayout";
 import {
-    serverInvitationAccept, serverInvitationReject
-} from '@/app/services/server/serverInvitationResponse';
-import { useToast } from '@/components/ui/use-toast';
-import { cn } from '@/lib/utils';
-import { Server, ServerInvitation } from '@prisma/client';
+  serverInvitationAccept,
+  serverInvitationReject,
+} from "@/app/services/server/serverInvitationResponse";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
+import { Server, ServerInvitation } from "@prisma/client";
 
 type Invitation = ServerInvitation & {
   server: Server;
@@ -24,15 +24,7 @@ const NavigationServerInvitation = ({
 }) => {
   const router = useRouter();
   const { toast } = useToast();
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
   return (
     <li
       title={serverInvitation.server.name + " Server invitation"}

@@ -14,6 +14,7 @@ import ChatDirectMessage from "@/components/chat/chat-direct-message";
 import ChatLoader from "@/components/chat/chat-loader";
 import { ChatWelcome } from "@/components/chat/chat-welcome";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ChatMessagesSkeleton from "@/components/utility/chat-messages-skeleton";
 import { Member } from "@prisma/client";
 
 interface Props {
@@ -57,6 +58,7 @@ export const ChatDirectMessages = ({
     fetchNextPage,
     isFetchingNextPage,
     isFetchedAfterMount,
+    isLoading,
   } = useGetDirectMessages({
     conversationId: chatId,
     messageId: messageId ? messageId : "",
@@ -116,6 +118,10 @@ export const ChatDirectMessages = ({
       setSentFalse();
     }
   }, [isSent, setSentFalse]);
+
+  if (isLoading) {
+    return <ChatMessagesSkeleton />;
+  }
 
   if (!data) {
     return null;

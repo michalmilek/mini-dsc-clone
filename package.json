@@ -41,6 +41,7 @@
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
     "emoji-mart": "^5.5.2",
+    "framer-motion": "^10.16.16",
     "livekit-client": "^1.15.3",
     "livekit-server-sdk": "^1.2.7",
     "lodash": "^4.17.21",

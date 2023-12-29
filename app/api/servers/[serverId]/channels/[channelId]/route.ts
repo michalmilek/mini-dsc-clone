@@ -1,6 +1,7 @@
+import { NextResponse } from "next/server";
+
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
@@ -21,11 +22,31 @@ export async function PATCH(
 
     const { serverId, channelId } = params;
 
+    const memberRole = await db.server.findFirst({
+      where: {
+        id: serverId,
+        members: {
+          some: {
+            profileId: profile.id,
+            NOT: [
+              {
+                role: "GUEST",
+              },
+            ],
+          },
+        },
+      },
+    });
+
+    if (!memberRole) {
+      return new NextResponse("Not allowed", { status: 401 });
+    }
+
     const server = await db.server.update({
       where: {
         id: serverId,
         members: {
-          every: {
+          some: {
             profileId: profile.id,
             role: "ADMIN" || "MODERATOR",
           },

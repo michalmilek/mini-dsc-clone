@@ -2,13 +2,13 @@
 
 import { Check, XIcon } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
 
-import { useInviteResponse } from '@/app/services/user/invite-response';
-import { useToast } from '@/components/ui/use-toast';
-import { cn } from '@/lib/utils';
-import { $Enums } from '@prisma/client';
+import { useInviteResponse } from "@/app/services/user/invite-response";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
+import { $Enums } from "@prisma/client";
 
 interface Invitation {
   id: string;
@@ -31,20 +31,12 @@ interface Invitation {
 const NavigationInvitation = ({ invitation }: { invitation: Invitation }) => {
   const router = useRouter();
   const { toast } = useToast();
-  const { mutate } = useInviteResponse(invitation.id);
-  const [mounted, setMounted] = useState(false);
+  const { mutate, isPending } = useInviteResponse(invitation.id);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
   return (
     <li
       title={invitation.sender.name + " Friend invitation"}
-      className={cn("w-full flex-col flex items-center justify-between")}>
+      className={cn("w-full flex-col flex items-center justify-between px-3")}>
       <span className="text-center">{invitation.sender.name}</span>
       <div className="w-full flex items-center justify-between">
         <div className={cn("relative w-12 h-12")}>
@@ -58,7 +50,11 @@ const NavigationInvitation = ({ invitation }: { invitation: Invitation }) => {
           />
         </div>
         <div className="flex flex-col items-center justify-between py-1">
-          <button
+          <Button
+            isLoading={isPending}
+            variant={"secondary"}
+            className="!p-0"
+            type="button"
             onClick={() => {
               mutate(
                 {
@@ -76,8 +72,12 @@ const NavigationInvitation = ({ invitation }: { invitation: Invitation }) => {
             }}
             title="Accept invitation">
             <Check className="text-green-500" />
-          </button>
-          <button
+          </Button>
+          <Button
+            isLoading={isPending}
+            variant={"secondary"}
+            className="!p-0"
+            type="button"
             onClick={() => {
               mutate(
                 {
@@ -95,7 +95,7 @@ const NavigationInvitation = ({ invitation }: { invitation: Invitation }) => {
             }}
             title="Decline Invitation">
             <XIcon className="text-red-500" />
-          </button>
+          </Button>
         </div>
       </div>
     </li>

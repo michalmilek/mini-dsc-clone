@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { useDebounce } from "@/app/hooks/use-debounce";
 import { useModal } from "@/app/hooks/use-modal-store";
 import { useAddFriend } from "@/app/services/user/add-friend";
 import { useGetUserManual } from "@/app/services/user/get-profiles";
@@ -16,6 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import MessageSkeleton from "@/components/utility/message-skeleton";
+import NoUsersFound from "@/components/utility/no-users-found";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChannelType } from "@prisma/client";
 
@@ -52,13 +55,15 @@ export const AddFriendModal = () => {
     },
   });
 
+  const debouncedValue = useDebounce(form.watch("name"), 300);
+
   const {
     data: usersData,
     error,
     isLoading,
-  } = useGetUserManual(form.watch("name"));
+  } = useGetUserManual(debouncedValue);
 
-  const { mutate } = useAddFriend();
+  const { mutate, isPending } = useAddFriend();
 
   const onSubmit = (formData: FormData) => {
     mutate(formData.name, {
@@ -84,13 +89,13 @@ export const AddFriendModal = () => {
       onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create channel</DialogTitle>
+          <DialogTitle>Add friend</DialogTitle>
           <DialogDescription>
-            Welcome! Here you can create a new channel to easily communicate
-            with other users. Choose a unique name for your channel that clearly
-            describes its subject matter. Once you have created a channel, you
-            will be able to invite other users to join and start sharing
-            information, ideas or files.
+            Welcome! Here you can add new friends to your network. Simply enter
+            your friend&apos;s username in the field below. Once they accept
+            your friend request, you&apos;ll be able to start sharing messages,
+            files, and more. Start growing your network and enjoy more engaging
+            conversations!
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -102,15 +107,20 @@ export const AddFriendModal = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Search</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
-                  <FormDescription>Give your channel a name</FormDescription>
+                  <FormDescription>
+                    Insert your friend name or email
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            {isLoading && <MessageSkeleton />}
+
+            {usersData?.length === 0 && <NoUsersFound />}
 
             {usersData?.length > 0 && (
               <ul className="gap-2 flex flex-col">
@@ -147,7 +157,7 @@ export const AddFriendModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
-              <Button>Invite</Button>
+              <Button isLoading={isPending}>Invite</Button>
             </DialogFooter>
           </form>
         </Form>

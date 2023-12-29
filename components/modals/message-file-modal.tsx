@@ -38,7 +38,7 @@ const schema = z.object({
 export const MessageFileModal = () => {
   const { onClose, isOpen, data } = useModal();
   const [isLoaded, setIsLoaded] = useState(false);
-  const { mutate } = useMessageFileUpload();
+  const { mutate, isPending } = useMessageFileUpload();
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -114,7 +114,7 @@ export const MessageFileModal = () => {
                 type="button">
                 Cancel
               </Button>
-              <Button>Confirm</Button>
+              <Button isLoading={isPending}>Confirm</Button>
             </DialogFooter>
           </form>
         </Form>

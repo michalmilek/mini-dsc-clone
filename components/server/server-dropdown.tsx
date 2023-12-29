@@ -8,7 +8,6 @@ import {
   UserPlus,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 
 import { useModal } from "@/app/hooks/use-modal-store";
 import {
@@ -46,16 +45,7 @@ interface Props {
 }
 
 const ServerDropdown = ({ role, members, name, server }: Props) => {
-  const [mounted, setMounted] = useState(false);
   const { onOpen } = useModal();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <DropdownMenu>

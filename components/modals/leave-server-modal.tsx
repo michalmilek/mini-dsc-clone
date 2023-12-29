@@ -39,7 +39,7 @@ export const LeaveServerModal = () => {
   const router = useRouter();
   const { toast } = useToast();
 
-  const { mutate } = useLeaveServer();
+  const { mutate, isPending } = useLeaveServer();
 
   const onClick = () => {
     mutate(`/api/servers/${data.server?.id}/leave-server`, {
@@ -79,6 +79,7 @@ export const LeaveServerModal = () => {
             Close
           </Button>
           <Button
+            isLoading={isPending}
             onClick={onClick}
             className="w-full sm:w-[50%]">
             Leave

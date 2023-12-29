@@ -1,11 +1,10 @@
-import { format } from "date-fns";
-import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { getIconByType } from "@/app/utils/get-icon-by-type";
 import NavigationSidebarMobile from "@/components/navigation/navigation-sidebar-mobile";
 import ServerDropdown from "@/components/server/server-dropdown";
+import ServerPageChannel from "@/components/server/server-page-channel";
+import ServerPageMember from "@/components/server/server-page-member";
+import NoMembers from "@/components/utility/no-members";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 
@@ -62,33 +61,10 @@ const ServerIdPage = async ({ params }: { params: { serverId: string } }) => {
             <ul className="w-full h-full p-3">
               {server.channels.length > 0 &&
                 server.channels.map((channel) => (
-                  <li
-                    className="hover:bg-gray-300 dark:hover:bg-gray-700 transition-all cursor-pointer p-2"
-                    key={channel.id + "mobile menu"}>
-                    <Link
-                      href={`/servers/${server.id}/channels/${channel.id}`}
-                      className="w-full h-full">
-                      <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                        <div className="flex-shrink-0">
-                          {getIconByType(channel.type)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
-                            {channel.name}
-                          </p>
-                          <p className="text-sm text-gray-500 truncate dark:text-gray-400">
-                            {channel.type}
-                          </p>
-                        </div>
-                        <div className="hidden xs:inline-flex items-center text-base text-gray-900 dark:text-white">
-                          {format(
-                            new Date(channel.createdAt),
-                            "dd/MM/yyyy HH:mm"
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
+                  <ServerPageChannel
+                    channel={channel}
+                    key={channel.id + "server page list"}
+                  />
                 ))}
             </ul>
           </div>
@@ -97,41 +73,16 @@ const ServerIdPage = async ({ params }: { params: { serverId: string } }) => {
           <div className="flex flex-col items-center justify-center w-full h-full">
             <h3 className="text-xl">Members</h3>
             <ul className="w-full h-full p-3">
+              {membersWithoutMe && membersWithoutMe.length === 0 && (
+                <NoMembers server={server} />
+              )}
               {membersWithoutMe &&
                 membersWithoutMe.length > 0 &&
                 membersWithoutMe.map((member) => (
-                  <li
-                    className="hover:bg-gray-300 dark:hover:bg-gray-700 transition-all cursor-pointer p-2"
-                    key={member.id + "mobile menu"}>
-                    <Link
-                      href={`/servers/${server.id}/conversations/${member.profile.id}`}
-                      className="w-full h-full">
-                      <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                        <div className="flex-shrink-0 h-10 w-10 relative">
-                          <Image
-                            fill
-                            alt={member.profile.name}
-                            src={member.profile.imageUrl}
-                            className="rounded-full"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate dark:text-white">
-                            {member.profile.name}
-                          </p>
-                          <p className="text-sm text-gray-500 truncate dark:text-gray-400">
-                            {member.role}
-                          </p>
-                        </div>
-                        <div className="hidden items-center text-base text-gray-900 dark:text-white xs:inline-flex">
-                          {format(
-                            new Date(member.createdAt),
-                            "dd/MM/yyyy HH:mm"
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  </li>
+                  <ServerPageMember
+                    member={member}
+                    key={member.id + "Server page member"}
+                  />
                 ))}
             </ul>
           </div>

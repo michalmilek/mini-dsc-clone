@@ -125,7 +125,7 @@ export const CreateServerModal = () => {
                 variant={"destructive"}>
                 Close
               </Button>
-              <Button disabled={isPending}>Create</Button>
+              <Button isLoading={isPending}>Create</Button>
             </DialogFooter>
           </form>
         </Form>
