@@ -10,6 +10,7 @@ import { db } from "@/lib/db";
 
 const ServerIdPage = async ({ params }: { params: { serverId: string } }) => {
   const profile = await currentProfile();
+
   if (!profile) {
     return redirect("/");
   }

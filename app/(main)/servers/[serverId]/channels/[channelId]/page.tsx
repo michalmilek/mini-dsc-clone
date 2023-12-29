@@ -19,11 +19,10 @@ const ChannelIdPage = async ({
     return redirectToSignIn();
   }
 
-  const { channelId } = params;
-
-  const channel = await db.channel.findUnique({
+  const channel = await db.channel.findFirst({
     where: {
-      id: channelId,
+      serverId: params.serverId,
+      id: params.channelId,
     },
   });
 
