@@ -54,7 +54,7 @@ const ChannelIdPage = async ({
           name={channel.name}
           socketUrl="/api/socket/messages"
           socketQuery={{
-            channelId: channelId,
+            channelId: params.channelId,
             serverId: channel.serverId,
           }}
           paramKey="channelId"
@@ -63,14 +63,14 @@ const ChannelIdPage = async ({
         />
         {channel.type === "VIDEO" && (
           <ChatMediaRoom
-            chatId={channelId}
+            chatId={params.channelId}
             audio={true}
             video={true}
           />
         )}
         {channel.type === "AUDIO" && (
           <ChatMediaRoom
-            chatId={channelId}
+            chatId={params.channelId}
             audio={true}
             video={false}
           />
