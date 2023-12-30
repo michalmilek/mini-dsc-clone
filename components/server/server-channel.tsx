@@ -30,7 +30,7 @@ const ServerChannel = ({
         {getIconByType(channel.type)}
         {channel.name}
       </Button>
-      {role !== "GUEST" && (
+      {role !== "GUEST" && channel.name !== "general" && (
         <div className="flex gap-1 items-center text-sm">
           <button
             onClick={() =>

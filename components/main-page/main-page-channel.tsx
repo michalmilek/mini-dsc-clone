@@ -10,7 +10,7 @@ const MainPageChannel = ({ channel }: { channel: Channel }) => {
       className="hover:bg-gray-300 dark:hover:bg-gray-700 transition-all cursor-pointer p-2"
       key={channel.id + "mobile menu"}>
       <Link
-        href={`/servers/${channel.serverId}/channels/${channel.serverId}`}
+        href={`/servers/${channel.serverId}/channels/${channel.id}`}
         className="w-full h-full">
         <div className="flex items-center space-x-4 rtl:space-x-reverse">
           <div className="flex-shrink-0">{getIconByType(channel.type)}</div>

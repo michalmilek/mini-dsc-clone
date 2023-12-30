@@ -28,6 +28,10 @@ export async function GET(req: Request) {
       },
     });
 
+    if (count === 0) {
+      return NextResponse.json({ items: [], nextCursor: null });
+    }
+
     const messageAmount = 10;
 
     let messageLookedAt: any;

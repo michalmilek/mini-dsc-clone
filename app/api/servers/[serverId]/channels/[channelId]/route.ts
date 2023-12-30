@@ -47,8 +47,12 @@ export async function PATCH(
         id: serverId,
         members: {
           some: {
-            profileId: profile.id,
-            role: "ADMIN" || "MODERATOR",
+            profile: {
+              id: profile.id,
+            },
+            role: {
+              not: "GUEST",
+            },
           },
         },
       },
@@ -70,9 +74,13 @@ export async function PATCH(
       },
     });
 
+    if (!server) {
+      return new NextResponse("Server not found", { status: 404 });
+    }
+
     return NextResponse.json(server);
   } catch (error) {
-    console.log("[DELETE_CHANNEL_ERROR]", error);
+    console.log("[PATCH_CHANNEL_ERROR]", error);
     return new NextResponse("Internal error", { status: 500 });
   }
 }

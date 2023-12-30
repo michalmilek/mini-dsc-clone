@@ -109,7 +109,7 @@ const NavigationSidebar = async () => {
   return (
     <>
       {hasDirectMessages && <title>Mini DSC - new messages</title>}
-      <aside className="fixed inset-y-0 left-0 flex-col justify-between  items-center py-3 bg-white dark:bg-black shadow w-32 z-30 hidden sm:flex">
+      <aside className="fixed inset-y-0 left-0 flex-col justify-between  items-center py-3 bg-white dark:bg-black shadow w-32 z-30 hidden sm:flex overflow-y-auto">
         <div className="flex flex-col w-full">
           <div className="space-y-3">
             <NavigationAdd label="Create server" />
