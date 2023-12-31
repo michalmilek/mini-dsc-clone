@@ -1,6 +1,6 @@
 # Mini dsc Clone: Real-time Chat and Video Communication
 
-Your Discord Clone is a feature-rich real-time chat and voice communication application inspired by the popular platform, Discord. Built using cutting-edge technologies, it provides users with a seamless and interactive communication experience.
+Mini dsc Clone is a feature-rich real-time chat and voice communication application inspired by the popular platform, Discord. It is built using cutting-edge technologies to provide users with a seamless and interactive communication experience.
 
 ## Key Features
 
@@ -10,28 +10,40 @@ Your Discord Clone is a feature-rich real-time chat and voice communication appl
 - User-friendly interface with customizable themes
 - Emoji support for adding personality to conversations
 - Role-based access control for server management
-- Rich media sharing, including images, videos(not yet), and links
+- Rich media sharing, including images, videos (coming soon), and links
 - Notification system for staying up-to-date with messages
 - Scalable architecture for handling a growing user base
 
 ## Technologies Used
 
-- Fullstack: NextJS.14, Typescript
+- Fullstack: Next.js, TypeScript
 - Frontend: React.js, Zustand, Socket.io
 - Backend: Node.js, Socket.io, Prisma
-- Database: mySQL
+- Database: MySQL
 - Authentication: Clerk
-- Styling: Tailwind, shadCN
-- Deployment: still in work
+- Styling: Tailwind CSS, shadCN
+- Deployment: [Vercel(NO SOCKETS)](https://mini-dsc-clone-git-chat-refetch-michalmilek.vercel.app)
 
 ## Channels
 
-Application supports three types of channels: audio, video, and text. Users can communicate with each other through these channels, providing a rich and interactive communication experience.
+The application supports three types of channels: audio, video, and text. Users can communicate with each other through these channels, providing a rich and interactive communication experience.
 
-## Realtime Communication
+## Real-time Communication
 
-When information arrives via sockets that a new message has arrived, the user retrieves it from the database. I have not used direct communication via sockets here for security reasons.
+When new messages arrive, the user retrieves them from the database using sockets. Same with friend/server invitations. However, due to Vercel's lack of support for custom servers, the socket functionality is currently not working in vercel deployment version, resulting in some parts of the application not functioning properly. 
+
+## Reactions And Unread messages
+
+Every message can be replied to and messages between friends have a read and unread status. Each time a message is received, a notification button from the once popular gadu-gadu messenger plays.
 
 ## Deployment
 
-Not finished, still in progress.
+The deployment of the application is still in progress and not yet finished. If you would like to test the live version, please send a private message and I will provide you with the complete configuration for the .env file.
+
+
+![screen 1](screenshots/scr1.png)
+![screen 2](screenshots/scr2.png)
+![screen 3](screenshots/scr3.png)
+![screen 4](screenshots/scr4.png)
+![screen 5](screenshots/scr5.png)
+![screen 6](screenshots/scr6.png)
