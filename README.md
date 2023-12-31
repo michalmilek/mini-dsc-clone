@@ -36,6 +36,10 @@ When new messages arrive, the user retrieves them from the database using socket
 
 Every message can be replied to and messages between friends have a read and unread status. Each time a message is received, a notification button from the once popular gadu-gadu messenger plays.
 
+## Virtualization
+
+The message list is virtualised using react-virtualised, for better application performance.
+
 ## Deployment
 
 The deployment of the application is still in progress and not yet finished. If you would like to test the live version, please send a private message and I will provide you with the complete configuration for the .env file.
