@@ -44,6 +44,10 @@ export default async function handler(
         },
       });
 
+      if (!sInvitation) {
+        return res.status(400).json({ message: "Invalid invite id" });
+      }
+
       const newFriend = await db.server.update({
         where: {
           id: invitation.serverId,
@@ -57,7 +61,9 @@ export default async function handler(
         },
       });
 
-      res?.socket?.server?.io?.emit(invitationResponse, "new msg");
+      const serverInvitationKey = `navigation:${sInvitation.receiverId}/:${sInvitation.senderId}:serverInvitationKey`;
+
+      res?.socket?.server?.io?.emit(serverInvitationKey, "new inv");
 
       return res.status(200).json(newFriend);
     } catch (error) {

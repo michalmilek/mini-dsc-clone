@@ -9,7 +9,6 @@ export default function NoMembers({
 }: {
   server: ServerWithChannelsAndMembersWithProfiles;
 }) {
-  console.log("🚀 ~ server:", server);
   const { onOpen } = useModal();
   return (
     <div className="flex flex-col items-center justify-center space-y-4">

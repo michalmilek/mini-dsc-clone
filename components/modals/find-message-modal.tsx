@@ -123,7 +123,6 @@ export const FindMessageModal = () => {
                           queryClient.removeQueries({
                             queryKey: ["messages", storeData.chatId],
                           });
-                          console.log("aaaa");
                         }}>
                         <div>
                           <p>{message.content}</p>
