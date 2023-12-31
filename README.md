@@ -52,3 +52,4 @@ The deployment of the application is still in progress and not yet finished. If 
 ![screen 5](screenshots/scr5.png)
 ![screen 6](screenshots/scr6.png)
 ![screen 7](screenshots/scr7.png)
+![screen 8](screenshots/scr8.png)
