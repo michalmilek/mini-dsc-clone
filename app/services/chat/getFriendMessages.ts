@@ -38,6 +38,7 @@ export function useGetFriendMessages({
   return useInfiniteQuery({
     queryKey: ["messages", friendshipId],
     queryFn: getMessages,
+    refetchInterval: 1000,
     getNextPageParam: (lastPage) => {
       if (lastPage.nextCursor === null) return undefined;
 

@@ -38,6 +38,7 @@ export function useGetDirectMessages({
   return useInfiniteQuery({
     queryKey: ["messages", conversationId],
     queryFn: getMessages,
+    refetchInterval: 1000,
     getNextPageParam: (lastPage) => {
       if (lastPage.nextCursor === null) return undefined;
 
