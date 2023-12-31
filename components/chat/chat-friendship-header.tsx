@@ -2,28 +2,27 @@
 
 import { Phone, Search, Video } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 
 import { useModal } from "@/app/hooks/use-modal-store";
 import { FriendshipFriend } from "@/app/types/server";
 import FriendshipMore from "@/components/friendship/friendship-more";
-import { useSocket } from "@/components/providers/socket-provider";
 import { SocketIndicator } from "@/components/socket-indicator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Friendship } from "@/types/friendship";
+import { Friendship, Profile } from "@prisma/client";
 
 interface Props {
   member: FriendshipFriend;
-  friendship: Friendship;
+  friendship: Friendship & {
+    friendOne: Profile;
+    friendTwo: Profile;
+  };
 }
 
 const ChatFriendshipHeader = ({ member, friendship }: Props) => {
   const { onOpen } = useModal();
-  const [isMounted, setIsMounted] = useState(false);
 
-  const { socket } = useSocket();
   const router = useRouter();
 
   const params = useParams();
@@ -34,14 +33,6 @@ const ChatFriendshipHeader = ({ member, friendship }: Props) => {
   const isLargerThan850 = useMediaQuery({
     query: "(min-width: 850px)",
   });
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
 
   return (
     <header className="p-2 sm:p-6 justify-between flex flex-col border-b-2 border-gray-200">

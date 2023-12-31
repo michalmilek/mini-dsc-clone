@@ -1,6 +1,6 @@
-import React from "react"
+import React from "react";
 
-import NavigationSidebar from "@/components/navigation/navigation-sidebar"
+import NavigationSidebar from "@/components/navigation/navigation-sidebar";
 
 const Template = async ({ children }: { children: React.ReactNode }) => {
   return (
@@ -8,7 +8,7 @@ const Template = async ({ children }: { children: React.ReactNode }) => {
       <NavigationSidebar />
       <main>{children}</main>
     </>
-  )
-}
+  );
+};
 
-export default Template
+export default Template;

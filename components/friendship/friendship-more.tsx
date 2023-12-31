@@ -11,10 +11,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
-import { Friendship } from "@/types/friendship";
 import { useUser } from "@clerk/nextjs";
+import { Friendship, Profile } from "@prisma/client";
 
-const FriendshipMore = ({ friendship }: { friendship: Friendship }) => {
+interface Props {
+  friendship: Friendship & {
+    friendOne: Profile;
+    friendTwo: Profile;
+  };
+}
+
+const FriendshipMore = ({ friendship }: Props) => {
   const { user } = useUser();
   const { mutate } = useRemoveFriend();
   const { toast } = useToast();

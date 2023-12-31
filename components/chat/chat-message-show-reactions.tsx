@@ -9,7 +9,7 @@ interface Props {
   reactions:
     | ReactionWithProfile[]
     | ReactionToDirectMessageWithProfile[]
-    | ReactionToFriendshipMessageWithProfile[]
+    | ReactionToFriendshipMessageWithProfile[];
 }
 
 const ChatMessageShowReactions = ({ reactions }: Props) => {

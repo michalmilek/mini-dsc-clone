@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { ChatDirectMediaRoom } from "@/components/chat/chat-direct-media-room";
 import { ChatFriendMessages } from "@/components/chat/chat-friend-messages";
 import ChatFriendshipHeader from "@/components/chat/chat-friendship-header";
 import ChatInput from "@/components/chat/chat-input";
@@ -68,7 +69,7 @@ const Page = async ({ params }: { params: { friendshipId: string } }) => {
             friendshipId: friendship.id,
           }}
         />
-        {/* <ChatDirectMediaRoom chatId={conversation.id} /> */}
+        <ChatDirectMediaRoom chatId={friendship.id} />
       </div>
     </>
   );

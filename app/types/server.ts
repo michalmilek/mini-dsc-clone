@@ -110,4 +110,3 @@ export type ServerWithChannelsAndMembersWithProfiles = Server & {
   channels: Channel[];
   members: MemberWithProfile[];
 };
-

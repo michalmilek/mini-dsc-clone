@@ -233,7 +233,6 @@ export const ChatMessages = ({
           </div>
         )}
       </div>
-      <div id="emptyDiv" />
     </div>
   );
 };
