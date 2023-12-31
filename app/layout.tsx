@@ -28,7 +28,11 @@ export default function RootLayout({
       <html
         lang="en"
         suppressHydrationWarning>
-        <body className={cn(inter.className, "bg-slate-100 dark:bg-gray-800")}>
+        <body
+          className={cn(
+            inter.className,
+            "bg-slate-100 dark:bg-gray-800 overflow-y-hidden"
+          )}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
