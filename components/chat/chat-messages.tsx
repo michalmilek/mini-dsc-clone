@@ -120,7 +120,13 @@ export const ChatMessages = ({
   }, [isSent, setSentFalse]);
 
   const flattenedMessages = useMemo(
-    () => data?.pages.flatMap((page) => page.items),
+    () => [
+      "empty",
+      ...(data?.pages
+        .flatMap((page) => page.items)
+        .slice()
+        .reverse() || []),
+    ],
     [data?.pages]
   );
 
@@ -157,10 +163,6 @@ export const ChatMessages = ({
                         rowCount={flattenedMessages.length}
                         className="w-full px-2"
                         rowRenderer={({ key, index, style, parent }) => {
-                          if (flattenedMessages.length - 1 - index === -1) {
-                            return null;
-                          }
-
                           if (!hasNextPage && index === 0) {
                             return (
                               <div
@@ -194,10 +196,7 @@ export const ChatMessages = ({
                             );
                           }
 
-                          let item =
-                            flattenedMessages[
-                              flattenedMessages.length - 1 - index + 1
-                            ];
+                          let item = flattenedMessages[index];
 
                           return (
                             <>

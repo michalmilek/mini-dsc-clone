@@ -64,14 +64,7 @@ const ChatMessage = ({
   const { mutate } = useEditMessage();
   const { user } = useUser();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    watch,
-  } = useForm<FormData>({
+  const { register, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       content: message.content,

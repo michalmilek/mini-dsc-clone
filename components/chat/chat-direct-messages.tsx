@@ -2,18 +2,22 @@
 
 import { MoreHorizontal } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useInView } from "react-intersection-observer";
-import { animateScroll as scroll } from "react-scroll";
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  List,
+  WindowScroller,
+} from "react-virtualized";
 
 import { useChatSocket } from "@/app/hooks/use-chat-socket";
 import { useSendMessageHook } from "@/app/hooks/use-send-message";
 import { useGetDirectMessages } from "@/app/services/chat/getDirectMessages";
-import { MessageWithMember } from "@/app/types/server";
 import ChatDirectMessage from "@/components/chat/chat-direct-message";
 import ChatLoader from "@/components/chat/chat-loader";
 import { ChatWelcome } from "@/components/chat/chat-welcome";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatMessagesSkeleton from "@/components/utility/chat-messages-skeleton";
 import { Member } from "@prisma/client";
 
@@ -29,25 +33,25 @@ interface Props {
   type: "channel" | "conversation";
 }
 
-interface Response {
-  items: MessageWithMember[];
-  nextCursor: string | null | undefined;
-}
-
 export const ChatDirectMessages = ({
   name,
   member,
   chatId,
-  apiUrl,
   socketUrl,
   socketQuery,
-  paramKey,
-  paramValue,
   type,
 }: Props) => {
+  const cache = useRef(
+    new CellMeasurerCache({
+      fixedWidth: true,
+      defaultHeight: 100,
+    })
+  );
   const { ref, inView } = useInView({
     threshold: 0,
   });
+
+  const listRef = useRef<List>(null);
   const { isSent, setSentFalse } = useSendMessageHook();
   const searchParams = useSearchParams();
   const messageId = searchParams?.get("messageId");
@@ -81,14 +85,6 @@ export const ChatDirectMessages = ({
   });
 
   useEffect(() => {
-    if (!data) {
-      return;
-    }
-
-    scroll.scrollToBottom({});
-  }, [data]);
-
-  useEffect(() => {
     if (!inView || !hasNextPage) {
       return;
     }
@@ -99,25 +95,28 @@ export const ChatDirectMessages = ({
   useEffect(() => {
     if (isFetchedAfterMount) {
       setTimeout(() => {
-        const element = document.getElementById("emptyDiv");
-
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
+        listRef.current?.scrollToRow(-1);
       }, 2000);
     }
   }, [isFetchedAfterMount]);
 
   useEffect(() => {
     if (isSent) {
-      const element = document.getElementById("emptyDiv");
-
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+      listRef.current?.scrollToRow(-1);
       setSentFalse();
     }
   }, [isSent, setSentFalse]);
+
+  const flattenedMessages = useMemo(
+    () => [
+      "empty",
+      ...(data?.pages
+        .flatMap((page) => page.items)
+        .slice()
+        .reverse() || []),
+    ],
+    [data?.pages]
+  );
 
   if (isLoading) {
     return <ChatMessagesSkeleton />;
@@ -127,50 +126,99 @@ export const ChatDirectMessages = ({
     return null;
   }
 
+  if (!flattenedMessages) {
+    return null;
+  }
+
   return (
-    <ScrollArea className="h-full">
-      <div className="h-full">
-        {!hasNextPage && (
-          <ChatWelcome
-            name={name}
-            type={type}
-          />
-        )}
-        {isFetchingNextPage && (
-          <div className="py-3">
-            <ChatLoader />
-          </div>
-        )}
-        {hasNextPage && <div ref={ref} />}
-        {hasNextPage && (
-          <button
-            onClick={() => fetchNextPage()}
-            className="w-full flex items-center justify-center">
-            <MoreHorizontal size={40} />
-          </button>
-        )}
-        {data && (
-          <div
-            id="messages"
-            className="flex flex-col-reverse space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
-            {data.pages.map((page) => {
-              return page.items.map((item: MessageWithMember) => (
-                <ChatDirectMessage
-                  type={type}
-                  socketUrl={socketUrl}
-                  chatId={chatId}
-                  socketQuery={socketQuery}
-                  key={item.id + "messages"}
-                  message={item}
-                  member={member}
-                  isSelf={item.memberId === member.id}
-                />
-              ));
-            })}
-          </div>
-        )}
-      </div>
-      <div id="emptyDiv" />
-    </ScrollArea>
+    <div className="h-full">
+      {flattenedMessages && (
+        <div
+          id="messages"
+          className="h-full w-full">
+          <WindowScroller>
+            {() => {
+              return (
+                <AutoSizer>
+                  {({ width, height }) => (
+                    <List
+                      ref={listRef}
+                      width={width}
+                      height={height}
+                      rowHeight={cache.current.rowHeight}
+                      deferredMeasurementCache={cache.current}
+                      rowCount={flattenedMessages.length}
+                      className="w-full px-2"
+                      rowRenderer={({ key, index, style, parent }) => {
+                        if (!hasNextPage && index === 0) {
+                          return (
+                            <div
+                              key={key + "test" + "messages"}
+                              style={style}>
+                              <ChatWelcome
+                                name={name}
+                                type={type}
+                              />
+                            </div>
+                          );
+                        }
+
+                        if (hasNextPage && index === 0) {
+                          return (
+                            <div
+                              key={key + "test" + "messages"}
+                              style={style}>
+                              {isFetchingNextPage && (
+                                <div className="py-1">
+                                  <ChatLoader />
+                                </div>
+                              )}
+                              <button
+                                ref={ref}
+                                onClick={() => fetchNextPage()}
+                                className="w-full flex items-center justify-center">
+                                <MoreHorizontal size={40} />
+                              </button>
+                            </div>
+                          );
+                        }
+
+                        let item = flattenedMessages[index];
+
+                        return (
+                          <>
+                            <div
+                              key={key + item.id + "messages"}
+                              style={style}>
+                              <CellMeasurer
+                                key={key + item.id + "messages"}
+                                cache={cache.current}
+                                parent={parent}
+                                columnIndex={0}
+                                rowIndex={index}>
+                                <ChatDirectMessage
+                                  type={type}
+                                  socketUrl={socketUrl}
+                                  chatId={chatId}
+                                  socketQuery={socketQuery}
+                                  key={item.id + "messages"}
+                                  message={item}
+                                  member={member}
+                                  isSelf={item.memberId === member.id}
+                                />
+                              </CellMeasurer>
+                            </div>
+                          </>
+                        );
+                      }}
+                    />
+                  )}
+                </AutoSizer>
+              );
+            }}
+          </WindowScroller>
+        </div>
+      )}
+    </div>
   );
 };
